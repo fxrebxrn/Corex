@@ -5,12 +5,14 @@ from models.user import User
 from schemas.user_schemas import UpdateUser
 from fastapi import HTTPException
 from core.security import DECLINED_NAMES
+from repositories.note_repository import NoteRepository
 
 
 class UserService:
     def __init__(self, db: AsyncSession):
         self.db = db
         self.repo = UserRepository(db)
+        self.note_repo = NoteRepository(db)
 
     async def _is_username_available(self, username: str) -> bool:
         user = await self.repo.get_by_username(username.strip().lower())
@@ -39,12 +41,12 @@ class UserService:
             "id": user.id,
             "name": user.name,
             "username": user.username,
-            "notes_count": await self.repo.get_notes_count(user.id)
+            "notes_count": await self.note_repo.get_notes_count(user.id)
         }
     
     async def get_all_user_notes(self, username: str):
         user = await self.get_by_username_or_raise(username)
-        return await self.repo.get_user_notes(user.id)
+        return await self.note_repo.get_user_notes(user.id)
     
     async def update_user_profile(self, current_user: User, user: UpdateUser):
         user_to_update = await self.get_by_id_or_raise(current_user.id)
