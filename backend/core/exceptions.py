@@ -25,3 +25,7 @@ class TagNotFound(NotFoundError):
 class PermissionDeniedError(AppError):
     status_code = 403
     detail = "Permission denied"
+
+class NoteNotFound(NotFoundError):
+    status_code = 404
+    detail = "Note not found"

@@ -27,11 +27,6 @@ async def get_all_user_notes(username: str, db: Annotated[AsyncSession, Depends(
     service = UserService(db)
     return await service.get_all_user_notes(username)
 
-@router.get("/{username}", response_model=UserProfileResponse)
-async def get_user_profile(username: str, db: Annotated[AsyncSession, Depends(get_db)]):
-    service = UserService(db)
-    return await service.get_profile_by_username(username)
-
 @router.patch("/me/email", response_model=EmailWDetailResponse)
 async def update_user_email(current_user: Annotated[User, Depends(get_current_user)], email: str, db: Annotated[AsyncSession, Depends(get_db)]):
     service = UserService(db)

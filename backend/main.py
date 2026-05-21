@@ -3,6 +3,7 @@ from fastapi.responses import JSONResponse
 from routers.auth import router as auth_router
 from routers.users import router as users_router
 from routers.tags import router as tags_router
+from routers.notes import router as notes_router
 import logging
 from core.exceptions import AppError
 from fastapi.middleware.cors import CORSMiddleware
@@ -66,3 +67,4 @@ async def global_exception_handler(request: Request, exc: Exception):
 app.include_router(auth_router)
 app.include_router(users_router)
 app.include_router(tags_router)
+app.include_router(notes_router)

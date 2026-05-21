@@ -8,7 +8,7 @@ class Note(TimestampMixin, Base):
 
     id: Mapped[int] = mapped_column(primary_key=True)
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
-    title: Mapped[str] = mapped_column(String(255), nullable=False)
+    title: Mapped[str] = mapped_column(String(255), nullable=False, default="")
     content: Mapped[str] = mapped_column(Text, nullable=True, default="")
     is_pinned: Mapped[bool] = mapped_column(default=False, nullable=False)
     is_archived: Mapped[bool] = mapped_column(default=False, nullable=False)
