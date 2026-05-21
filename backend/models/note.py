@@ -12,6 +12,7 @@ class Note(TimestampMixin, Base):
     content: Mapped[str] = mapped_column(Text, nullable=True, default="")
     is_pinned: Mapped[bool] = mapped_column(default=False, nullable=False)
     is_archived: Mapped[bool] = mapped_column(default=False, nullable=False)
+    is_public: Mapped[bool] = mapped_column(default=False, nullable=False)
     
     user: Mapped["User"] = relationship(back_populates="notes")
     tags: Mapped[list["Tag"]] = relationship(secondary="note_tags", back_populates="notes")

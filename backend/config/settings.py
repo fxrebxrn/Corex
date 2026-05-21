@@ -7,6 +7,7 @@ class Settings(BaseSettings):
     ALGORITHM: str
     ACCESS_TOKEN_EXPIRE_MINUTES: int
     REFRESH_TOKEN_EXPIRE_DAYS: int
+    MAX_TAGS_COUNT: int
     
     DATABASE_URL: str
     

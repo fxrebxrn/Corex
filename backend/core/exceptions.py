@@ -17,3 +17,11 @@ class NotFoundError(AppError):
 class UserNotFound(NotFoundError):
     status_code = 404
     detail = "User not found"
+
+class TagNotFound(NotFoundError):
+    status_code = 404
+    detail = "Tag not found"
+
+class PermissionDeniedError(AppError):
+    status_code = 403
+    detail = "Permission denied"

@@ -35,6 +35,11 @@ class UserRepository:
         return await get_scalar_result(self.db, stmt)
     
     async def get_user_notes(self, user_id: int):
-        stmt = select(Note).options(selectinload(Note.tags), selectinload(Note.user)).where(Note.user_id == user_id)
+        stmt = select(Note).options(selectinload(Note.tags), selectinload(Note.user)).where(
+            Note.user_id == user_id, 
+            Note.is_archived == False, 
+            Note.is_public == True).order_by(
+                Note.is_pinned.desc(),
+                Note.updated_at.desc())
         return await fetch_all_by_stmt(self.db, stmt)
     
