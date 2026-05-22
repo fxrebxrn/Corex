@@ -21,6 +21,14 @@ class TagService:
 
         return tag
 
+    async def get_by_id_my(self, tag_id: int, user_id: int):
+        tag = await self.get_by_id_or_raise(tag_id)
+
+        if tag.user_id != user_id:
+            raise PermissionDeniedError()
+
+        return tag
+
     async def create_tag(self, tag: TagCreate, current_user: User):
         exists = await self.repo.get_user_tag_by_name(tag.name, current_user.id)
         if exists:

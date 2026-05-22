@@ -1,17 +1,19 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from repositories.note_repository import NoteRepository
-from schemas.note_schemas import NoteFinalize, NoteShortResponse
-from models.user import User
+from schemas.note_schemas import NoteFinalize
 from models.note import Note
+from models.tag import NoteTag
 from fastapi import HTTPException
 from core.exceptions import NoteNotFound, PermissionDeniedError
 from datetime import datetime
+from services.tag_service import TagService
 
 
 class NoteService:
     def __init__(self, db: AsyncSession):
         self.db = db
         self.repo = NoteRepository(db)
+        self.tag_service = TagService(db)
 
     async def get_by_id_or_raise(self, note_id: int):
         note = await self.repo.get_by_id(note_id)
@@ -23,7 +25,12 @@ class NoteService:
         note = await self.get_by_id_or_raise(note_id)
         if note.user_id != user_id:
             raise PermissionDeniedError()
-
+        return note
+    
+    async def get_by_id_public(self, note_id: int):
+        note = await self.repo.get_by_id_public(note_id)
+        if not note:
+            raise NoteNotFound()
         return note
     
     async def create_empty_note(self, user_id: int) -> Note:
@@ -50,7 +57,7 @@ class NoteService:
         note = await self.get_by_id_my(note_id, user_id)
 
         title = note_data.title.strip() if note_data.title else ""
-        content = note_data.content.strip() if note_data.content else ""
+        content = note_data.content if note_data.content else ""
 
         if not title and not content:
             await self.db.delete(note)
@@ -139,3 +146,98 @@ class NoteService:
         await self.repo.db.refresh(note)
         
         return note
+
+    async def toggle_archive_note(self, user_id: int, note_id: int):
+        note = await self.get_by_id_my(note_id, user_id)
+
+        note.is_archived = not note.is_archived
+
+        await self.repo.db.flush()
+        await self.repo.db.refresh(note)
+        
+        return {
+            "detail": "Successfully note archived" if note.is_archived else "Successfully note unarchived",
+        }
+
+    async def search_notes(self, user_id: int, query: str, limit: int, 
+                        cursor_updated_at: datetime | None = None, 
+                        cursor_id: int | None = None):
+        
+        if (cursor_updated_at is None) != (cursor_id is None):
+            raise HTTPException(
+                status_code=400,
+                detail="cursor_updated_at and cursor_id must be provided together"
+            )
+
+        search_query = query.strip()
+
+        notes_desc = await self.repo.search_notes(user_id, search_query, limit, cursor_updated_at, cursor_id)
+        
+        has_more = len(notes_desc) > limit
+        items = notes_desc[:limit]
+
+        next_cursor = None
+        if has_more and items:
+            oldest_item = items[-1]
+            next_cursor = {
+                "updated_at": oldest_item.updated_at,
+                "id": oldest_item.id
+            }
+
+        return {
+            "items": items,
+            "limit": limit,
+            "next_cursor": next_cursor,
+            "has_more": has_more
+        }
+    
+    async def delete_note(self, user_id: int, note_id: int):
+        note = await self.get_by_id_my(note_id, user_id)
+
+        await self.db.delete(note)
+        await self.db.flush()
+
+        return {"detail": "Successfully note deleted"}
+
+    async def add_tag_to_note(self, note_id: int, tag_id: int, user_id: int):
+        note = await self.get_by_id_my(note_id, user_id)
+        await self.tag_service.get_by_id_my(tag_id, user_id)
+
+        tag_note_exists = await self.repo.get_tag_note(note_id, tag_id)
+        if tag_note_exists:
+            raise HTTPException(
+                status_code=400,
+                detail="Note already has this tag"
+            )
+
+        note_tag = NoteTag(
+            note_id=note_id,
+            tag_id=tag_id
+            )
+        self.db.add(note_tag)
+
+        await self.db.flush()
+        await self.db.refresh(note)
+
+        return note
+    
+    async def remove_tag_from_note(self, note_id: int, tag_id: int, user_id: int):
+        note = await self.get_by_id_my(note_id, user_id)
+        await self.tag_service.get_by_id_my(tag_id, user_id)
+
+        tag_note = await self.repo.get_tag_note(note_id, tag_id)
+        if not tag_note:
+            raise HTTPException(
+                status_code=400,
+                detail="Note already does not have this tag"
+            )
+
+        await self.db.delete(tag_note)
+
+        await self.db.flush()
+        await self.db.refresh(note)
+
+        return note
+    
+    async def get_pinned_notes(self, user_id: int):
+        return await self.repo.get_pinned_notes(user_id)

@@ -23,12 +23,13 @@ class NoteFinalize(BaseModel):
 
 class NoteResponse(BaseModel):
     id: int
-    user_id: int
     title: str
     content: str | None
     is_pinned: bool
     is_archived: bool
     is_public: bool
+    tags: list[TagOut]
+    user: UserShortResponse
     created_at: datetime
     updated_at: datetime
 

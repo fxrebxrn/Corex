@@ -4,3 +4,4 @@ __pycache__/
 .env
 app.log
 .pytest_cache/
+*.bat
