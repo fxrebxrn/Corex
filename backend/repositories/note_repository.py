@@ -16,7 +16,7 @@ class NoteRepository:
         return await fetch_first_by_stmt(self.db, stmt)
 
     async def get_unnamed_count(self, user_id: int):
-        stmt = select(func.count(Note.id)).where(Note.user_id == user_id, Note.title.ilike("Без названия%"))
+        stmt = select(func.count(Note.id)).where(Note.user_id == user_id, Note.title.ilike("Unnamed%"))
         return await get_scalar_result(self.db, stmt) or 0
     
     async def get_notes_count(self, user_id: int):

@@ -4,7 +4,7 @@ __pycache__/
 .env
 app.log
 .pytest_cache/
-*.bat
-frontend/
+terminal.bat
 tests/
 pytest.ini
+frontend/

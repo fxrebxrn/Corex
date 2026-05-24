@@ -37,9 +37,9 @@ class NoteService:
         count = await self.repo.get_unnamed_count(user_id)
 
         if count == 0:
-            default_title = "Без названия"
+            default_title = "Unnamed"
         else:
-            default_title = f"Без названия {count}"
+            default_title = f"Unnamed {count}"
 
         new_note = Note(
             user_id=user_id,
