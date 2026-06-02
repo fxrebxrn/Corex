@@ -78,3 +78,8 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)], db: An
         raise InvalidTokenError()
     
     return user
+
+def without_at_prefix(username: str) -> str:
+    if username.startswith("@"):
+        return username[1:]
+    return username

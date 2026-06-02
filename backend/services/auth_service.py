@@ -1,6 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from schemas.auth_schemas import UserRegister
-from core.security import hash_password, verify_password, create_access_token, create_refresh_token, decode_token
+from core.security import hash_password, without_at_prefix, verify_password, create_access_token, create_refresh_token, decode_token
 from fastapi import HTTPException, Request
 from models.user import User
 from repositories.user_repository import UserRepository
@@ -29,11 +29,21 @@ class AuthService:
         await reset_failed_attempts(key)
         
         hashed_password = hash_password(user.password)
+
+        normal_username = without_at_prefix(user.username)
+        
+        existing_user = await self.user_repo.get_by_username(normal_username)
+        if existing_user:
+            await add_failed_attempt(key, window=60)
+            await check_rate_limit(key, limit=5)
+            raise HTTPException(status_code=400, detail="Username already exists")
+        
+        await reset_failed_attempts(key)
         
         new_user = User(
             name=user.name,
             email=user.email,
-            username=user.username,
+            username=normal_username,
             hashed_password=hashed_password
         )
         
@@ -52,7 +62,9 @@ class AuthService:
         }
 
     async def login_user(self, request: Request, form_data: OAuth2PasswordRequestForm):
-        login = form_data.username
+        normal_username = without_at_prefix(form_data.username)
+        
+        login = normal_username
         password = form_data.password
         
         ip = request.client.host

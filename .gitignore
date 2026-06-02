@@ -7,4 +7,3 @@ app.log
 terminal.bat
 tests/
 pytest.ini
-frontend/

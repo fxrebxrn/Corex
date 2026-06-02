@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Authorization</title>
+</head>
+<body>
+    <div class="auth-container" id="auth-container">
+        <div class="auth-window" id="auth-window">
+            <h1 class="auth-logo">Corex</h1>
+
+            <div class="auth-login" id="login-window">
+                <div class="auth-login-desc">Back to your workspace</div>
+                
+                <form class="auth-form" id="login-form" novalidate>
+                    <div class="input-group">
+                        <label for="login-email-input" class="hidden">Email or Username</label>
+                        <input 
+                            id="login-email-input"
+                            class="auth-input"
+                            type="text" placeholder="Email/Username"
+                            autocomplete="username"
+                            required >
+                    </div>
+
+                    <div class="input-group">
+                        <label for="login-password-input" class="hidden">Password</label>
+                        <input 
+                            id="login-password-input"
+                            class="auth-input"
+                            type="password"
+                            placeholder="Password"
+                            autocomplete="current-password"
+                            required >
+                    </div>
+
+                    <button type="submit" id="login-button" class="auth-button primary">
+                        Login
+                    </button>
+                </form>
+
+                <button type="button" class="auth-toggle-btn" id="show-register-button">
+                    Don't have an account? <span>Sign up</span>
+                </button>
+            </div>
+
+            <div class="auth-register hidden" id="register-window">
+                <div class="auth-login-desc">Unlock your new superpower</div>
+                
+                <form class="auth-form" id="login-form" novalidate>
+                    <div class="input-group">
+                        <label for="register-name-input" class="hidden">Name</label>
+                        <input 
+                            id="register-name-input"
+                            class="auth-input"
+                            type="text" 
+                            placeholder="Full Name"
+                            autocomplete="name"
+                            required >
+                    </div>
+
+                    <div class="input-group">
+                        <label for="register-username-input" class="hidden">Username</label>
+                        <input 
+                            id="register-username-input"
+                            class="auth-input"
+                            type="text" 
+                            placeholder="Username"
+                            autocomplete="username"
+                            required >
+                    </div>
+
+                    <div class="input-group">
+                        <label for="register-email-input" class="hidden">Email</label>
+                        <input 
+                            id="register-email-input"
+                            class="auth-input"
+                            type="email" 
+                            placeholder="Email"
+                            autocomplete="email"
+                            required >
+                    </div>
+
+                    <div class="input-group">
+                        <label for="register-password-input" class="hidden">Password</label>
+                        <input 
+                            id="register-password-input"
+                            class="auth-input"
+                            type="password"
+                            placeholder="Password"
+                            autocomplete="current-password"
+                            required >
+                    </div>
+
+                    <button type="submit" id="register-button" class="auth-button primary">
+                        Register
+                    </button>
+                </form>
+
+                <button type="button" class="auth-toggle-btn" id="show-login-button">
+                    Already have an account? <span>Sign in</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
