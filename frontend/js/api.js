@@ -1,0 +1,97 @@
+const API_URL = "http://192.168.0.100:8000/api";
+
+
+const checkUsernameRequest = async (username) => {
+    try {
+        const response = await fetch(`${API_URL}/user/check?username=${username}`);
+
+        const data = await response.json();
+
+        return data;
+
+    } catch (error) {
+        showToast(error);
+
+        return {
+            success: false,
+            detail: "Network error"
+        };
+    }
+};
+
+const loginRequest = async (username, password) => {
+    const formData = new URLSearchParams();
+    formData.append("username", username);
+    formData.append("password", password);
+
+    try {
+        const response = await fetch(`${API_URL}/auth/login`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded"
+            },
+            body: formData
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            return {
+                success: false,
+                detail: data.detail || "Login failed"
+            };
+        }
+
+        return {
+            success: true,
+            ...data
+        };
+
+    } catch (error) {
+        showToast(error);
+
+        return {
+            success: false,
+            detail: "Network error"
+        };
+    }
+};
+
+const registerRequest = async (name, username, email, password) => {
+    try {
+        const response = await fetch(`${API_URL}/auth/register`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                name: name,
+                email: email,
+                username: username,
+                password: password
+            })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            return {
+                success: false,
+                detail: data.detail || "Register failed"
+            };
+        }
+
+        return {
+            success: true,
+            ...data
+        };
+
+    } catch (error) {
+        showToast(error);
+
+        return {
+            success: false,
+            detail: "Network error"
+        };
+    }
+};
