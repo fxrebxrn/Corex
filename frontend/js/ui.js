@@ -28,3 +28,20 @@ function showToast(message, duration = 4000) {
         }, 300);
     }, duration);
 }
+
+const formatErrorMessage = (errorItem, fieldName) => {
+    const friendlyName = fieldName.charAt(0).toUpperCase() + fieldName.slice(1);
+
+    switch (errorItem.type) {
+        case "string_too_short":
+            return `${friendlyName} must be at least ${errorItem.ctx.min_length} characters`;
+        case "string_too_long":
+            return `${friendlyName} must be no more than ${errorItem.ctx.max_length} characters`;
+        case "value_error":
+            return errorItem.msg.replace("Value error, ", "");
+        case "missing":
+            return `${friendlyName} is required`;
+        default:
+            return errorItem.msg.replace("String", friendlyName);
+    }
+};

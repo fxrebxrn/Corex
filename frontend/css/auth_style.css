@@ -93,7 +93,7 @@ body {
     z-index: 0;
     overflow: hidden;
     background: var(--bg-base);
-    pointer-events: none
+    pointer-events: none;
 }
 
 .bg-marquee-container {
@@ -113,21 +113,26 @@ body {
     display: flex;
     overflow: hidden;
     white-space: nowrap;
-    margin-bottom: -60px;
+    margin-bottom: -0.50em; 
     font-size: 10rem;
     font-weight: 900;
     letter-spacing: 10px;
     color: var(--text-primary);
     text-transform: uppercase;
     user-select: none;
+    flex-shrink: 0;
+}
+
+.marquee-line span {
+    flex-shrink: 0;
 }
 
 .marquee-line:nth-child(even) span {
-    animation: marquee-reverse 80s linear infinite;
+    animation: marquee-reverse 770s linear infinite;
 }
 
 .marquee-line:nth-child(odd) span {
-    animation: marquee-forward 80s linear infinite;
+    animation: marquee-forward 770s linear infinite;
 }
 
 @keyframes marquee-forward {
@@ -247,13 +252,13 @@ body {
 .check-box-yes,
 .check-box-no {
     position: absolute;
-    right: 12px;
+    right: 10px;
     top: 50%;
     transform: translateY(-50%);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 18px;
+    font-size: 19px;
     pointer-events: none;
     transition: opacity 0.2s ease, transform 0.2s ease;
 }

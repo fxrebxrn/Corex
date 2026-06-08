@@ -25,12 +25,21 @@ const checkRegisterUsername = async (username) => {
     }
 };
 
+const clearErrorOnInput = (inputElement) => {
+    inputElement.addEventListener("input", () => {
+        inputElement.classList.remove("input-error");
+    }, { once: true });
+};
+
 const login = async () => {
-    const username = loginUsernameInput.value;
-    const password = loginPasswordInput.value;
+    const inputs = [loginUsernameInput, loginPasswordInput];
+    inputs.forEach(input => input.classList.remove("input-error"));
+    
+    const username = loginUsernameInput.value.trim();
+    const password = loginPasswordInput.value.trim();
 
     if (!username || !password) {
-        showToast("Please enter username and password");
+        showToast("Please fill in all fields");
         if (!username) loginUsernameInput.classList.add("input-error");
         if (!password) loginPasswordInput.classList.add("input-error");
         return;
@@ -50,28 +59,77 @@ const login = async () => {
 };
 
 const register = async () => {
-    const name = registerNameInput.value;
-    const email = registerEmailInput.value;
-    const username = registerUsernameInput.value;
-    const password = registerPasswordInput.value;
+    const inputMapping = {
+        name: registerNameInput,
+        email: registerEmailInput,
+        username: registerUsernameInput,
+        password: registerPasswordInput
+    };
+
+    Object.values(inputMapping).forEach(input => input.classList.remove("input-error"));
+    
+    const name = registerNameInput.value.trim();
+    const email = registerEmailInput.value.trim();
+    const username = registerUsernameInput.value.trim();
+    const password = registerPasswordInput.value.trim();
 
     if (!username || !password || !email || !name) {
-        showToast("Please enter name, email, username and password");
-        if (!username) registerUsernameInput.classList.add("input-error");
-        if (!password) registerPasswordInput.classList.add("input-error");
-        if (!email) registerEmailInput.classList.add("input-error");
-        if (!name) registerNameInput.classList.add("input-error");
+        showToast("Please fill in all fields");
+        if (!username) { registerUsernameInput.classList.add("input-error"); clearErrorOnInput(registerUsernameInput); }
+        if (!password) { registerPasswordInput.classList.add("input-error"); clearErrorOnInput(registerPasswordInput); }
+        if (!email) { registerEmailInput.classList.add("input-error"); clearErrorOnInput(registerEmailInput); }
+        if (!name) { registerNameInput.classList.add("input-error"); clearErrorOnInput(registerNameInput); }
         return;
     }
 
     const data = await registerRequest(name, username, email, password);
 
     if (!data.success) {
-        showToast(data.detail);
-        registerUsernameInput.classList.add("input-error");
-        registerPasswordInput.classList.add("input-error");
-        registerEmailInput.classList.add("input-error");
-        registerNameInput.classList.add("input-error");
+        const errorMessages = [];
+
+        if (Array.isArray(data.detail)) {
+            data.detail.forEach(errorItem => {
+                const fieldName = errorItem.loc[1];
+                const targetInput = inputMapping[fieldName];
+
+                if (targetInput) {
+                    targetInput.classList.add("input-error");
+                    clearErrorOnInput(targetInput);
+                }
+
+                const humanReadableMessage = formatErrorMessage(errorItem, fieldName);
+                errorMessages.push(humanReadableMessage);
+            });
+
+        } else {
+            const rawErrors = Array.isArray(data.detail) ? data.detail : [data.detail || "Registration failed"];
+
+            rawErrors.forEach(errorText => {
+                const lowerError = errorText.toLowerCase();
+                let matched = false;
+
+                if (lowerError.includes("email")) {
+                    registerEmailInput.classList.add("input-error");
+                    clearErrorOnInput(registerEmailInput);
+                    matched = true;
+                }
+                if (lowerError.includes("username")) {
+                    registerUsernameInput.classList.add("input-error");
+                    clearErrorOnInput(registerUsernameInput);
+                    matched = true;
+                }
+                if (!matched) {
+                    Object.values(inputMapping).forEach(input => {
+                        input.classList.add("input-error");
+                        clearErrorOnInput(input);
+                    });
+                }
+
+                errorMessages.push(errorText);
+            });
+        }
+
+        showToast(errorMessages.join(" | "));
         return;
     }
 
