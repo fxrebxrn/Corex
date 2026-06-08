@@ -66,14 +66,11 @@ class RefreshTokenRequest(BaseModel):
 class RefreshTokenOutResponse(BaseModel):
     access_token: str
     refresh_token: str
-    token_type: str
 
     model_config = ConfigDict(from_attributes=True)
 
 class LoginResponse(BaseModel):
     access_token: str
     refresh_token: str
-    token_type: str
-    user: UserShortResponse
 
     model_config = ConfigDict(from_attributes=True)

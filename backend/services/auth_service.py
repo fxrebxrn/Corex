@@ -57,8 +57,6 @@ class AuthService:
         return {
             "access_token": access_token,
             "refresh_token": refresh_token,
-            "token_type": "bearer",
-            "user": new_user
         }
 
     async def login_user(self, request: Request, form_data: OAuth2PasswordRequestForm):
@@ -89,8 +87,6 @@ class AuthService:
         return {
             "access_token": access_token,
             "refresh_token": refresh_token,
-            "token_type": "bearer",
-            "user": user_to_login
         }
 
     async def refresh_token(self, data: RefreshTokenRequest, token: str):
