@@ -3,7 +3,7 @@ const API_URL = "http://192.168.0.100:8000/api";
 
 const checkUsernameRequest = async (username) => {
     try {
-        const response = await fetch(`${API_URL}/user/check?username=${username}`);
+        const response = await fetch(`${API_URL}/users/check/${username}`);
 
         const data = await response.json();
 

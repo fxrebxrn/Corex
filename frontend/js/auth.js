@@ -9,9 +9,21 @@ const registerNameInput = document.querySelector("#register-name-input");
 const registerEmailInput = document.querySelector("#register-email-input");
 const registerUsernameInput = document.querySelector("#register-username-input");
 const registerPasswordInput = document.querySelector("#register-password-input");
+const checkBoxYes = document.querySelector(".check-box-yes");
+const checkBoxNo = document.querySelector(".check-box-no");
 
 
-const checkRegisterUsername = async (username) => {};
+const checkRegisterUsername = async (username) => {
+    if (!username) return;
+
+    const data = await checkUsernameRequest(username);
+
+    if (data.detail === false) {
+        checkBoxNo.classList.remove("hidden");
+    } else {
+        checkBoxYes.classList.remove("hidden");
+    }
+};
 
 const login = async () => {
     const username = loginUsernameInput.value;
@@ -112,6 +124,17 @@ registerEmailInput.addEventListener("input", () => {
 
 registerUsernameInput.addEventListener("input", () => {
     registerUsernameInput.classList.remove("input-error");
+    
+    if (!checkBoxYes.classList.contains("hidden")) {
+        checkBoxYes.classList.add("hidden");
+    }
+    if (!checkBoxNo.classList.contains("hidden")) {
+        checkBoxNo.classList.add("hidden");
+    }
+    
+    if (registerUsernameInput.value.length >= 4) {
+        checkRegisterUsername(registerUsernameInput.value);
+    }
 });
 
 registerPasswordInput.addEventListener("input", () => {
