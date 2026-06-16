@@ -1,5 +1,6 @@
 const showRegisterBtn = document.querySelector("#show-register-button");
 const showLoginBtn = document.querySelector("#show-login-button");
+const registerBtn = document.querySelector("#register-button");
 
 const loginUsernameInput = document.querySelector("#login-username-input");
 const loginPasswordInput = document.querySelector("#login-password-input");
@@ -12,16 +13,24 @@ const registerPasswordInput = document.querySelector("#register-password-input")
 const checkBoxYes = document.querySelector(".check-box-yes");
 const checkBoxNo = document.querySelector(".check-box-no");
 
+let debounceTimeout = null;
+
 
 const checkRegisterUsername = async (username) => {
     if (!username) return;
 
     const data = await checkUsernameRequest(username);
 
+    if (!data || data.success === false) {
+        return; 
+    }
+
     if (data.detail === false) {
         checkBoxNo.classList.remove("hidden");
+        registerBtn.disabled = true;
     } else {
         checkBoxYes.classList.remove("hidden");
+        registerBtn.disabled = false;
     }
 };
 
@@ -183,18 +192,24 @@ registerEmailInput.addEventListener("input", () => {
 registerUsernameInput.addEventListener("input", () => {
     registerUsernameInput.classList.remove("input-error");
     
-    if (!checkBoxYes.classList.contains("hidden")) {
-        checkBoxYes.classList.add("hidden");
-    }
-    if (!checkBoxNo.classList.contains("hidden")) {
-        checkBoxNo.classList.add("hidden");
-    }
+    registerBtn.disabled = true;
+
+    checkBoxYes.classList.add("hidden");
+    checkBoxNo.classList.add("hidden");
     
-    if (registerUsernameInput.value.length >= 4) {
-        checkRegisterUsername(registerUsernameInput.value);
+    clearTimeout(debounceTimeout);
+    
+    const username = registerUsernameInput.value.trim();
+    
+    if (username.length >= 4) {
+        debounceTimeout = setTimeout(() => {
+            checkRegisterUsername(username);
+        }, 1000);
     }
 });
 
 registerPasswordInput.addEventListener("input", () => {
     registerPasswordInput.classList.remove("input-error");
 });
+
+initApp();

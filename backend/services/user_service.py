@@ -94,4 +94,3 @@ class UserService:
             "detail": "Email updated successfully", 
             "email": user_to_update.email
             }
-    
