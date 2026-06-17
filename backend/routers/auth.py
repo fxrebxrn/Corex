@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends
 from schemas.auth_schemas import UserRegister, RefreshTokenRequest, LoginResponse, RefreshTokenOutResponse
+from schemas.util_schemas import DetailResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 from core.database import get_db
 from fastapi.security import OAuth2PasswordRequestForm
@@ -23,9 +24,13 @@ async def login_user(request: Request, db: Annotated[AsyncSession, Depends(get_d
     return await service.login_user(request, form_data)
 
 @router.post("/refresh", response_model=RefreshTokenOutResponse)
-async def refresh_token(data: RefreshTokenRequest, token: Annotated[str, Depends(oauth2_scheme)], db: Annotated[AsyncSession, Depends(get_db)]):
+async def refresh_token(data: RefreshTokenRequest, db: Annotated[AsyncSession, Depends(get_db)]):
     service = AuthService(db)
-    return await service.refresh_token(data, token)
+    return await service.refresh_token(data)
+
+@router.get("/check", response_model=DetailResponse)
+async def check_avalability(current_user: Annotated[User, Depends(get_current_user)]):
+    return {"detail": "OK"}
 
 @router.post("/logout")
 async def logout(data: RefreshTokenRequest, 

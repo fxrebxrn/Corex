@@ -98,3 +98,72 @@ const registerRequest = async (name, username, email, password) => {
         };
     }
 };
+
+const tokenCheckRequest = async (token) => {
+    try {
+        const response = await fetch(`${API_URL}/auth/check`, {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${token}`
+            }
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            return {
+                success: false,
+                detail: data.detail
+            };
+        };
+
+        return {
+            success: true,
+            ...data
+        };
+
+    } catch (error) {
+        showToast(error.message);
+
+        return {
+            success: false,
+            detail: "Network error"
+        };
+    }
+};
+
+const refreshTokenRequest = async (refresh_token) => {
+    try {
+        const response = await fetch(`${API_URL}/auth/refresh`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                refresh_token: refresh_token
+            })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            return {
+                success: false,
+                detail: data.detail
+            };
+        };
+
+        return {
+            success: true,
+            ...data
+        };
+
+    } catch (error) {
+        showToast(error.message);
+
+        return {
+            success: false,
+            detail: "Network error"
+        };
+    }
+};

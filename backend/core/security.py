@@ -10,7 +10,6 @@ import logging
 from core.exceptions import InvalidTokenError, ExpiredTokenError
 from typing import Annotated
 from repositories.user_repository import UserRepository
-from core.redis_blacklist import is_blacklisted
 
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/login")
@@ -55,9 +54,6 @@ def decode_token(token: str):
         raise InvalidTokenError()
 
 async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)], db: Annotated[AsyncSession, Depends(get_db)]):
-    if await is_blacklisted(token):
-        raise InvalidTokenError()
-    
     payload = decode_token(token)
 
     if payload.get("type") != "access":

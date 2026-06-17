@@ -9,7 +9,10 @@ from utils.rate_limit import check_rate_limit, add_failed_attempt, reset_failed_
 from core.exceptions import InvalidTokenError, ExpiredTokenError
 from schemas.auth_schemas import RefreshTokenRequest
 from core.redis_blacklist import add_to_blacklist, is_blacklisted
+import logging
 
+
+logger = logging.getLogger(__name__)
 
 class AuthService:
     def __init__(self, db: AsyncSession):
@@ -89,26 +92,22 @@ class AuthService:
             "refresh_token": refresh_token,
         }
 
-    async def refresh_token(self, data: RefreshTokenRequest, token: str):
+    async def refresh_token(self, data: RefreshTokenRequest):
         if await is_blacklisted(data.refresh_token):
-            raise InvalidTokenError()
+            raise InvalidTokenError
         
-        payload_refresh = decode_token(data.refresh_token)
+        try:
+            payload_refresh = decode_token(data.refresh_token)
+        except ExpiredTokenError:
+            raise InvalidTokenError
         
         if payload_refresh.get("type") != "refresh":
-            raise InvalidTokenError()
+            raise InvalidTokenError
         
         user_id = payload_refresh.get("user_id")
         if not user_id:
-            raise InvalidTokenError()
-        
-        try:
-            payload_access = decode_token(token)
-            if payload_access.get("type") != "access":
-                raise InvalidTokenError()
-            await add_to_blacklist(token, payload_access.get("exp"))
-        except ExpiredTokenError:
-            pass 
+            logger.warning(f"Invalid token, user not found: {user_id}")
+            raise InvalidTokenError
         
         new_access_token = create_access_token({"user_id": user_id})
         new_refresh_token = create_refresh_token({"user_id": user_id})
@@ -117,8 +116,7 @@ class AuthService:
         
         return {
             "access_token": new_access_token,
-            "refresh_token": new_refresh_token,
-            "token_type": "bearer"
+            "refresh_token": new_refresh_token
         }
 
     async def logout(self, access_token: str, refresh_token: str):

@@ -64,7 +64,7 @@ const login = async () => {
     }
 
     saveTokens(data.access_token, data.refresh_token);
-    window.location.href = "notes.html";
+    navigateTo("/app");
 };
 
 const register = async () => {
@@ -143,7 +143,18 @@ const register = async () => {
     }
 
     saveTokens(data.access_token, data.refresh_token);
-    window.location.href = "notes.html";
+    navigateTo("/app");
+};
+
+const refreshToken = async (refresh_token) => {
+    const data = await refreshTokenRequest(refresh_token);
+
+    if (!data.success) {
+        return false;
+    }
+
+    saveTokens(data.access_token, data.refresh_token);
+    return true;
 };
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -211,5 +222,3 @@ registerUsernameInput.addEventListener("input", () => {
 registerPasswordInput.addEventListener("input", () => {
     registerPasswordInput.classList.remove("input-error");
 });
-
-initApp();
