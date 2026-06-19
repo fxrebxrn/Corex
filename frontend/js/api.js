@@ -167,3 +167,36 @@ const refreshTokenRequest = async (refresh_token) => {
         };
     }
 };
+
+const getUserMeRequest = async (token) => {
+    try {
+        const response = await fetch(`${API_URL}/users/me`, {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${token}`
+            }
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            return {
+                success: false,
+                detail: data.detail
+            };
+        };
+
+        return {
+            success: true,
+            ...data
+        };
+
+    } catch (error) {
+        showToast(error.message);
+
+        return {
+            success: false,
+            detail: "Network error"
+        };
+    }
+};

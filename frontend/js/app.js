@@ -38,6 +38,7 @@ const renderRoute = async () => {
             window.history.replaceState({}, "", "/app");
             path = "/app";
         }
+        renderNavBarProfile(); 
     }
 
     document.querySelectorAll(".page").forEach((p) => p.classList.add("hidden"));
