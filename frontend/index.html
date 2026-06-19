@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Corex</title>
     <link rel="stylesheet" href="css/auth_style.css">
+    <link rel="stylesheet" href="css/main_style.css">
+    <link rel="stylesheet" href="css/modals_style.css">
 </head>
 <body>
     <div class="toast-container" id="toast-container"></div>
@@ -103,8 +105,687 @@
     </div>
 
     <div id="page-app" class="page hidden">
-        <h1>Notes</h1>
-        <button id="logout-button">Logout</button>
+        <div class="app-container">
+
+            <aside class="nav-sidebar">
+                <header class="nav-sidebar-header">
+                    <div class="nav-sidebar-brand">
+                        <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="128px" height="128px" viewBox="0 0 128 128" style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd" xmlns:xlink="http://www.w3.org/1999/xlink">
+                            <g><path style="opacity:1" fill="#f9faf9" d="M 31.5,-0.5 C 49.5,-0.5 67.5,-0.5 85.5,-0.5C 94.5675,7.73954 102.401,17.0729 109,27.5C 109.948,41.9021 109.615,56.2354 108,70.5C 104.77,78.0628 99.27,83.2295 91.5,86C 81.883,87.1927 72.2164,87.8594 62.5,88C 48.0069,92.1683 42.8402,101.335 47,115.5C 52.8333,110.333 58.6667,105.167 64.5,100C 73.5,99.6667 82.5,99.3333 91.5,99C 95.7811,96.6087 98.7811,93.1087 100.5,88.5C 103.472,86.6944 106.305,84.6944 109,82.5C 110.684,96.969 104.517,106.136 90.5,110C 82.8333,110.333 75.1667,110.667 67.5,111C 60.7209,116.046 54.3876,121.546 48.5,127.5C 47.5,127.5 46.5,127.5 45.5,127.5C 40.4773,122.121 37.144,115.787 35.5,108.5C 26.2047,106.371 20.3714,100.704 18,91.5C 17.3333,66.1667 17.3333,40.8333 18,15.5C 19.9497,7.88841 24.4497,2.55507 31.5,-0.5 Z M 34.5,9.5 C 50.1702,9.33341 65.8369,9.50008 81.5,10C 82.1412,15.164 82.9746,20.3306 84,25.5C 87.8673,29.6848 92.7006,31.6848 98.5,31.5C 99.6656,41.4834 99.8322,51.4834 99,61.5C 97.6744,68.8229 93.5077,73.6562 86.5,76C 78.5,76.3333 70.5,76.6667 62.5,77C 50.0421,78.9702 41.7088,85.8036 37.5,97.5C 32.2631,96.7649 29.0965,93.7649 28,88.5C 27.3333,65.1667 27.3333,41.8333 28,18.5C 28.8727,14.4754 31.0393,11.4754 34.5,9.5 Z"/></g>
+                            <g><path style="opacity:1" fill="#f9faf9" d="M 40.5,34.5 C 53.5043,34.3334 66.5043,34.5001 79.5,35C 83.5,37.6667 83.5,40.3333 79.5,43C 66.5,43.6667 53.5,43.6667 40.5,43C 37.8987,40.1705 37.8987,37.3371 40.5,34.5 Z"/></g>
+                            <g><path style="opacity:1" fill="#f9faf9" d="M 41.5,52.5 C 54.1711,52.3334 66.8377,52.5001 79.5,53C 82.7366,55.4187 83.07,58.0854 80.5,61C 67.1667,61.6667 53.8333,61.6667 40.5,61C 37.6655,57.6955 37.9988,54.8621 41.5,52.5 Z"/></g>
+                        </svg>
+                    </div>
+                    <span class="brand-name">Corex</span>
+                </header>
+
+                <nav class="nav-sections">
+                    <a href="#" class="nav-item nav-item-active" data-filter="all">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><title xmlns="">file-text</title><g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"><path d="M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"/><path d="M14 2v5a1 1 0 0 0 1 1h5M10 9H8m8 4H8m8 4H8"/></g></svg>
+                        <span class="nav-item-label">All Notes</span>
+                        <span class="nav-item-count">12</span>
+                    </a>
+
+                    <a href="#" class="nav-item" data-filter="archived">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                            <title>archive</title>
+                            <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                                <rect width="20" height="5" x="2" y="3" rx="1"/>
+                                <path d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8m-10 4h4"/>
+                            </g>
+                        </svg>
+                        <span class="nav-item-label">Archived</span>
+                        <span class="nav-item-count">1</span>
+                    </a>
+                </nav>
+
+                <div class="nav-tags-section">
+                    <div class="nav-tags-header">
+                        <span class="nav-tags-title">TAGS</span>
+                        <button class="nav-tags-add-btn" title="New tag">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                                <title>New tag</title>
+                                <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14m-7-7v14"/>
+                            </svg>
+                        </button>
+                    </div>
+
+                    <ul class="nav-tags-list">
+                        <li class="nav-tag-item nav-tag-item-active">
+                            <a href="#" class="nav-tag-link nav-tag-item-active" data-tag="work">
+                                <span class="nav-tag-dot nav-tag-dot-red"></span>
+                                <span class="nav-tag-name">Work</span>
+                                <button class="nav-tag-remove-btn" title="Remove filter">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                                        <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 6 6 18M6 6l12 12"/>
+                                    </svg>
+                                </button>
+                            </a>
+                        </li>
+                        <li class="nav-tag-item">
+                            <a href="#" class="nav-tag-link" data-tag="ideas">
+                                <span class="nav-tag-dot nav-tag-dot-green"></span>
+                                <span class="nav-tag-name">Ideas</span>
+                                <button class="nav-tag-remove-btn" title="Remove filter">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                                        <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 6 6 18M6 6l12 12"/>
+                                    </svg>
+                                </button>
+                            </a>
+                        </li>
+                        <li class="nav-tag-item">
+                            <a href="#" class="nav-tag-link" data-tag="research">
+                                <span class="nav-tag-dot nav-tag-dot-orange"></span>
+                                <span class="nav-tag-name">Research</span>
+                                <button class="nav-tag-remove-btn" title="Remove filter">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                                        <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 6 6 18M6 6l12 12"/>
+                                    </svg>
+                                </button>
+                            </a>
+                        </li>
+                        <li class="nav-tag-item">
+                            <a href="#" class="nav-tag-link" data-tag="personal">
+                                <span class="nav-tag-dot nav-tag-dot-teal"></span>
+                                <span class="nav-tag-name">Personal</span>
+                                <button class="nav-tag-remove-btn" title="Remove filter">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                                        <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 6 6 18M6 6l12 12"/>
+                                    </svg>
+                                </button>
+                            </a>
+                        </li>
+                        <li class="nav-tag-item">
+                            <a href="#" class="nav-tag-link" data-tag="dev">
+                                <span class="nav-tag-dot nav-tag-dot-blue"></span>
+                                <span class="nav-tag-name">Dev</span>
+                                <button class="nav-tag-remove-btn" title="Remove filter">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                                        <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 6 6 18M6 6l12 12"/>
+                                    </svg>
+                                </button>
+                            </a>
+                        </li>
+                        <li class="nav-tag-item">
+                            <a href="#" class="nav-tag-link" data-tag="sd">
+                                <span class="nav-tag-dot nav-tag-dot-purple"></span>
+                                <span class="nav-tag-name">sd</span>
+                                <button class="nav-tag-remove-btn" title="Remove filter">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                                        <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 6 6 18M6 6l12 12"/>
+                                    </svg>
+                                </button>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <footer class="nav-sidebar-footer">
+                    <button class="nav-user" id="nav-userInfo">
+                        <div class="nav-user-avatar">A</div>
+                        <div class="nav-user-info">
+                            <span class="nav-user-name">Alex Chen</span>
+                            <span class="nav-user-username">@alexche</span>
+                        </div>
+                    </button>
+                </footer>
+            </aside>
+
+            <aside class="notes-sidebar">
+                <header class="notes-sidebar-header">
+                    <div class="search-wrapper">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                            <title>search</title>
+                            <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                                <path d="m21 21l-4.34-4.34"/>
+                                <circle cx="11" cy="11" r="8"/>
+                            </g>
+                        </svg>
+                        <input class="search-input"
+                            placeholder="Search..."
+                            type="search"
+                            autocomplete="off"
+                            maxlength="100">
+                    </div>
+                </header>
+
+                <main class="notes-container">
+
+                    <div class="note-card" id="note-1">
+                        <header class="note-card-header">
+                            <div class="note-card-title-wrapper">
+                                <h2 class="note-card-title">
+                                    <span class="note-card-pinned-icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                                            <title>pin</title>
+                                            <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 17v5M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1a2 2 0 0 0 0-4H8a2 2 0 0 0 0 4a1 1 0 0 1 1 1z"/>
+                                        </svg>
+                                    </span>
+                                    HyperOS 3 Design Language
+                                </h2>
+                            </div>
+                            <button class="note-card-options-btn">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                                    <title>Options</title>
+                                    <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                                        <circle cx="12" cy="12" r="1"/>
+                                        <circle cx="12" cy="5" r="1"/>
+                                        <circle cx="12" cy="19" r="1"/>
+                                    </g>
+                                </svg>
+                            </button>
+                        </header>
+                        <p class="note-card-preview">Overview HyperOS 3 introduces a refined visual system built around three core…</p>
+                        <section class="note-card-tags">
+                            <span class="tag tag-1">Work</span>
+                        </section>
+                        <footer class="note-card-footer">
+                            <time datetime="2026-05-26T10:00:00">Yesterday</time>
+                        </footer>
+                    </div>
+
+                    <div class="note-card" id="note-2">
+                        <header class="note-card-header">
+                            <div class="note-card-title-wrapper">
+                                <h2 class="note-card-title">Q2 Product Strategy</h2>
+                            </div>
+                            <button class="note-card-options-btn">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                                    <title>Options</title>
+                                    <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                                        <circle cx="12" cy="12" r="1"/>
+                                        <circle cx="12" cy="5" r="1"/>
+                                        <circle cx="12" cy="19" r="1"/>
+                                    </g>
+                                </svg>
+                            </button>
+                        </header>
+                        <p class="note-card-preview">Goals Ship the notes sync feature by end of May Reduce editor load time to under…</p>
+                        <section class="note-card-tags">
+                            <span class="tag tag-1">Work</span>
+                            <span class="tag tag-2">Ideas</span>
+                        </section>
+                        <footer class="note-card-footer">
+                            <time datetime="2026-05-24T14:00:00">24 sep</time>
+                        </footer>
+                    </div>
+
+                    <div class="note-card note-card-active" id="note-3">
+                        <header class="note-card-header">
+                            <div class="note-card-title-wrapper">
+                                <h2 class="note-card-title">asd</h2>
+                            </div>
+                            <button class="note-card-options-btn">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                                    <title>Options</title>
+                                    <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                                        <circle cx="12" cy="12" r="1"/>
+                                        <circle cx="12" cy="5" r="1"/>
+                                        <circle cx="12" cy="19" r="1"/>
+                                    </g>
+                                </svg>
+                            </button>
+                        </header>
+                        <p class="note-card-preview">Dense interfaces feel powerful when density is earned. The mistake most ap…</p>
+                        <section class="note-card-tags">
+                            <span class="tag tag-2">Ideas</span>
+                        </section>
+                        <footer class="note-card-footer">
+                            <time datetime="2026-05-27T10:00:00">Today</time>
+                        </footer>
+                    </div>
+
+                    <div class="note-card" id="note-4">
+                        <header class="note-card-header">
+                            <div class="note-card-title-wrapper">
+                                <h2 class="note-card-title">Untitled</h2>
+                            </div>
+                            <button class="note-card-options-btn">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                                    <title>Options</title>
+                                    <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                                        <circle cx="12" cy="12" r="1"/>
+                                        <circle cx="12" cy="5" r="1"/>
+                                        <circle cx="12" cy="19" r="1"/>
+                                    </g>
+                                </svg>
+                            </button>
+                        </header>
+                        <footer class="note-card-footer">
+                            <time datetime="2026-05-27T09:00:00">Today</time>
+                        </footer>
+                    </div>
+
+                    <div class="note-card" id="note-5">
+                        <header class="note-card-header">
+                            <div class="note-card-title-wrapper">
+                                <h2 class="note-card-title">Untitled</h2>
+                            </div>
+                            <button class="note-card-options-btn">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                                    <title>Options</title>
+                                    <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                                        <circle cx="12" cy="12" r="1"/>
+                                        <circle cx="12" cy="5" r="1"/>
+                                        <circle cx="12" cy="19" r="1"/>
+                                    </g>
+                                </svg>
+                            </button>
+                        </header>
+                        <footer class="note-card-footer">
+                            <time datetime="2026-05-27T08:30:00">Today</time>
+                        </footer>
+                    </div>
+
+                    <div class="note-card" id="note-6">
+                        <header class="note-card-header">
+                            <div class="note-card-title-wrapper">
+                                <h2 class="note-card-title">Untitled</h2>
+                            </div>
+                            <button class="note-card-options-btn">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                                    <title>Options</title>
+                                    <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                                        <circle cx="12" cy="12" r="1"/>
+                                        <circle cx="12" cy="5" r="1"/>
+                                        <circle cx="12" cy="19" r="1"/>
+                                    </g>
+                                </svg>
+                            </button>
+                        </header>
+                        <footer class="note-card-footer">
+                            <time datetime="2026-05-27T08:00:00">Today</time>
+                        </footer>
+                    </div>
+
+                    <div class="note-card" id="note-7">
+                        <header class="note-card-header">
+                            <div class="note-card-title-wrapper">
+                                <h2 class="note-card-title">Untitled</h2>
+                            </div>
+                            <button class="note-card-options-btn">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                                    <title>Options</title>
+                                    <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                                        <circle cx="12" cy="12" r="1"/>
+                                        <circle cx="12" cy="5" r="1"/>
+                                        <circle cx="12" cy="19" r="1"/>
+                                    </g>
+                                </svg>
+                            </button>
+                        </header>
+                        <footer class="note-card-footer">
+                            <time datetime="2026-05-27T07:30:00">Today</time>
+                        </footer>
+                    </div>
+
+                    <div class="note-card" id="note-8">
+                        <header class="note-card-header">
+                            <div class="note-card-title-wrapper">
+                                <h2 class="note-card-title">Untitled</h2>
+                            </div>
+                            <button class="note-card-options-btn">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                                    <title>Options</title>
+                                    <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                                        <circle cx="12" cy="12" r="1"/>
+                                        <circle cx="12" cy="5" r="1"/>
+                                        <circle cx="12" cy="19" r="1"/>
+                                    </g>
+                                </svg>
+                            </button>
+                        </header>
+                        <footer class="note-card-footer">
+                            <time datetime="2026-05-27T07:00:00">Today</time>
+                        </footer>
+                    </div>
+
+                    <div class="note-card" id="note-9">
+                        <header class="note-card-header">
+                            <div class="note-card-title-wrapper">
+                                <h2 class="note-card-title">Weekly Review — May 26</h2>
+                            </div>
+                            <button class="note-card-options-btn">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                                    <title>Options</title>
+                                    <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                                        <circle cx="12" cy="12" r="1"/>
+                                        <circle cx="12" cy="5" r="1"/>
+                                        <circle cx="12" cy="19" r="1"/>
+                                    </g>
+                                </svg>
+                            </button>
+                        </header>
+                        <p class="note-card-preview">Done [x] Shipped tag filtering [x] Fixed scroll jank on note list [x] Reviewed…</p>
+                        <section class="note-card-tags">
+                            <span class="tag tag-1">Work</span>
+                            <span class="tag tag-4">Personal</span>
+                        </section>
+                        <footer class="note-card-footer">
+                            <time datetime="2026-05-26T10:00:00">Yesterday</time>
+                        </footer>
+                    </div>
+
+                    <div class="note-card" id="note-10">
+                        <header class="note-card-header">
+                            <div class="note-card-title-wrapper">
+                                <h2 class="note-card-title">Typography in Dark Interfaces</h2>
+                            </div>
+                            <button class="note-card-options-btn">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                                    <title>Options</title>
+                                    <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                                        <circle cx="12" cy="12" r="1"/>
+                                        <circle cx="12" cy="5" r="1"/>
+                                        <circle cx="12" cy="19" r="1"/>
+                                    </g>
+                                </svg>
+                            </button>
+                        </header>
+                        <p class="note-card-preview">Research notes on how type behaves on dark backgrounds. Contrast ratio for…</p>
+                        <section class="note-card-tags">
+                            <span class="tag tag-1">Work</span>
+                            <span class="tag tag-4">Personal</span>
+                        </section>
+                        <footer class="note-card-footer">
+                            <time datetime="2026-05-26T09:00:00">Yesterday</time>
+                        </footer>
+                    </div>
+
+                </main>
+
+                <footer class="notes-sidebar-footer">
+                    <button class="notes-new-note-btn" id="button-create-note-bottom">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                            <title>New note</title>
+                            <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14m-7-7v14"/>
+                        </svg>
+                        New note
+                    </button>
+                </footer>
+            </aside>
+
+            <div class="resizer" id="central-resizer"></div>
+
+            <main class="editor-area">
+                <header class="editor-header-options">
+                    <input 
+                    type="text" 
+                    class="editor-note-title-input" 
+                    placeholder="Untitled" 
+                    value="asd" 
+                    />
+                    <div class="editor-fast-actions">
+                        <button class="editor-action-btn" id="note-pin" title="Pin">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                                <title>pin</title>
+                                <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 17v5M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1a2 2 0 0 0 0-4H8a2 2 0 0 0 0 4a1 1 0 0 1 1 1z"/>
+                            </svg>
+                            Pin
+                        </button>
+                        <button class="editor-action-btn" id="note-archive" title="Archive">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                                <title>archive</title>
+                                <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                                    <rect width="20" height="5" x="2" y="3" rx="1"/>
+                                    <path d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8m-10 4h4"/>
+                                </g>
+                            </svg>
+                            Archive
+                        </button>
+                        <button class="editor-action-btn editor-action-btn-danger" id="note-delete" title="Delete">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                                <title>trash</title>
+                                <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                                    <path d="M3 6h18m-2 0v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+                                </g>
+                            </svg>
+                            Delete
+                        </button>
+                    </div>
+                </header>
+
+                <div class="editor-main-content">
+                    <div class="editor-info-bar">
+                        <div class="editor-tags-container">
+                            <span class="tag tag-2">Ideas</span>
+                            <span class="tag tag-0">
+                                <button class="more-tags-btn" title="Add tag">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                                        <title>Add tag</title>
+                                        <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14m-7-7v14"/>
+                                    </svg>
+                                    Tag
+                                </button>
+                            </span>
+                        </div>
+                    </div>
+
+                    <textarea class="editor-textarea"
+                        spellcheck="false"
+                        maxlength="500000"
+                        placeholder="Start typing here...">Dense interfaces feel powerful when density is earned.
+
+The mistake most apps make: they add information without adding *structure*. The result is clutter, not density.
+
+Telegram's message list is dense. Bloomberg Terminal is dense. What they share: every pixel serves a clear purpose.
+
+**Rules I'm working with:**
+- Never show more than 3 hierarchy levels simultaneously
+- Muted text should be muted by opacity, not by size
+- Hover states should reveal — never introduce new layout elements</textarea>
+                </div>
+
+                <footer class="editor-footer">
+                    <span class="editor-footer-stat">Created 20 May 2026</span>
+                    <span class="editor-footer-divider">•</span>
+                    <span class="editor-footer-stat">Updated yesterday</span>
+                </footer>
+            </main>
+        </div>
+        <div class="modals-container">
+            <div class="app-modals">
+                <div class="account-modal">
+                    <header class="account-modal-title">
+                        <h1>Edit profile</h1>
+                    </header>
+                    <div class="account-content">
+                        <form class="account-form" id="profile-form">
+                            <div class="account-field">
+                                <label for="profile-input-name" class="hidden"> Name</label>
+                                <input type="text" autocomplete="new-password" name="name" id="profile-input-name" placeholder="Name" value="Alex Chen" required />
+                            </div>
+                            <div class="account-field">
+                                <label for="profile-input-username" class="hidden">Username</label>
+                                <input type="text" autocomplete="new-password" name="username" id="profile-input-username" placeholder="Username" value="alexche" required />
+                            </div>
+                            <button class="account-form-cancel" type="button">Cancel</button>
+                            <button class="account-form-submit" type="submit">Save</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="tag-modal">
+                    <div class="tag-modal-title">
+                        <h1>New tag</h1>
+                    </div>
+                    
+                    <form class="tag-form">
+                        <div class="tag-field">
+                            <label for="tag-name-input">Tag name</label>
+                            <input 
+                                type="text" 
+                                id="tag-name-input" 
+                                placeholder="Tag name" 
+                                maxlength="16" 
+                                autocomplete="off" 
+                                autocorrect="off" 
+                                autocapitalize="off" 
+                                spellcheck="false"
+                            >
+                        </div>
+                        
+                        <div class="tag-field">
+                            <label>Tag color</label>
+                            <div class="tag-color-picker">
+                                <label class="color-option">
+                                    <input type="radio" name="tag-color" value="red" class="color-radio">
+                                    <span class="color-swatch is-red"></span>
+                                </label>
+                                <label class="color-option">
+                                    <input type="radio" name="tag-color" value="green" class="color-radio">
+                                    <span class="color-swatch is-green"></span>
+                                </label>
+                                <label class="color-option">
+                                    <input type="radio" name="tag-color" value="orange" class="color-radio">
+                                    <span class="color-swatch is-orange"></span>
+                                </label>
+                                <label class="color-option">
+                                    <input type="radio" name="tag-color" value="teal" class="color-radio">
+                                    <span class="color-swatch is-teal"></span>
+                                </label>
+                                <label class="color-option">
+                                    <input type="radio" name="tag-color" value="blue" class="color-radio" checked>
+                                    <span class="color-swatch is-blue"></span>
+                                </label>
+                                <label class="color-option">
+                                    <input type="radio" name="tag-color" value="purple" class="color-radio">
+                                    <span class="color-swatch is-purple"></span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="tag-field">
+                            <label>Preview</label>
+                            <div class="tag-preview-box">
+                                <span class="tag-badge-preview">New tag</span>
+                            </div>
+                        </div>
+
+                        <button type="button" class="tag-form-cancel">Cancel</button>
+                        <button type="submit" class="tag-form-submit">Add</button>
+                    </form>
+                </div>
+
+                <div class="delete-tag-modal">
+                    <div class="confirm-modal-content">
+                        <h1 class="confirm-modal-title">Delete Tag</h1>
+                        <p class="confirm-modal-desc">Are you sure you want to delete this tag? This action cannot be undone and the tag will be removed from all associated notes.</p>
+                    </div>
+                    <div class="confirm-modal-actions">
+                        <button type="button" class="confirm-btn-cancel">Cancel</button>
+                        <button type="button" class="confirm-btn-delete">Delete</button>
+                    </div>
+                </div>
+
+                <div class="delete-note-modal">
+                    <div class="confirm-modal-content">
+                        <h1 class="confirm-modal-title">Delete Note</h1>
+                        <p class="confirm-modal-desc">Are you sure you want to delete this note? This action cannot be undone and it will be permanently removed.</p>
+                    </div>
+                    <div class="confirm-modal-actions">
+                        <button type="button" class="confirm-btn-cancel">Cancel</button>
+                        <button type="button" class="confirm-btn-delete">Delete</button>
+                    </div>
+                </div>
+
+                <div class="note-tags-modal is-open">
+                    <div class="note-tags-title">
+                        <h1>Add Tags to Note</h1>
+                    </div>
+                    
+                    <div class="note-tags-search">
+                        <input 
+                            type="text" 
+                            placeholder="Search tags..." 
+                            autocomplete="off" 
+                            autocorrect="off" 
+                            autocapitalize="off" 
+                            spellcheck="false"
+                        >
+                    </div>
+                    
+                    <div class="note-tags-list">
+                        <label class="tag-select-item">
+                            <input type="checkbox" name="note-tag" value="design" checked>
+                            <span class="tag-select-dot is-red"></span>
+                            <span class="tag-select-name">Design</span>
+                            <span class="tag-select-box">
+                                <svg viewBox="0 0 12 12"><path d="M2 6.5L4.5 9L10 3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                            </span>
+                        </label>
+
+                        <label class="tag-select-item">
+                            <input type="checkbox" name="note-tag" value="development">
+                            <span class="tag-select-dot is-blue"></span>
+                            <span class="tag-select-name">Development</span>
+                            <span class="tag-select-box">
+                                <svg viewBox="0 0 12 12"><path d="M2 6.5L4.5 9L10 3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                            </span>
+                        </label>
+
+                        <label class="tag-select-item">
+                            <input type="checkbox" name="note-tag" value="personal" checked>
+                            <span class="tag-select-dot is-green"></span>
+                            <span class="tag-select-name">Personal</span>
+                            <span class="tag-select-box">
+                                <svg viewBox="0 0 12 12"><path d="M2 6.5L4.5 9L10 3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                            </span>
+                        </label>
+
+                        <label class="tag-select-item">
+                            <input type="checkbox" name="note-tag" value="important">
+                            <span class="tag-select-dot is-purple"></span>
+                            <span class="tag-select-name">Important</span>
+                            <span class="tag-select-box">
+                                <svg viewBox="0 0 12 12"><path d="M2 6.5L4.5 9L10 3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                            </span>
+                        </label>
+                    </div>
+                    
+                    <div class="note-tags-actions">
+                        <button type="button" class="note-tags-cancel">Cancel</button>
+                        <button type="button" class="note-tags-submit">Done</button>
+                    </div>
+                </div>
+
+            </div>
+            <div class="context-modals">
+                <div class="note-options-menu">
+                    <button type="button" class="menu-item">
+                        <span class="menu-item-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
+                                <title>pin</title>
+                                <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 17v5M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1a2 2 0 0 0 0-4H8a2 2 0 0 0 0 4a1 1 0 0 1 1 1z"/>
+                            </svg>    
+                        </span>
+                        <span class="menu-item-text">Pin Note</span>
+                    </button>
+
+                    <button type="button" class="menu-item">
+                        <span class="menu-item-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="21 8 21 21 3 21 3 8"></polyline><rect x="1" y="3" width="22" height="5"></rect><line x1="10" y1="12" x2="14" y2="12"></line></svg>
+                        </span>
+                        <span class="menu-item-text">Archive</span>
+                    </button>
+
+                    <button type="button" class="menu-item">
+                        <span class="menu-item-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
+                        </span>
+                        <span class="menu-item-text">Attach Tag</span>
+                    </button>
+
+                    <div class="menu-divider"></div>
+
+                    <button type="button" class="menu-item is-destructive">
+                        <span class="menu-item-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
+                        </span>
+                        <span class="menu-item-text">Delete</span>
+                    </button>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script src="js/storage.js"></script>
