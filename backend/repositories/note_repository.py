@@ -22,6 +22,10 @@ class NoteRepository:
     async def get_notes_count(self, user_id: int):
         stmt = select(func.count(Note.id)).where(Note.user_id == user_id)
         return await get_scalar_result(self.db, stmt)
+
+    async def get_archived_notes_count(self, user_id: int):
+        stmt = select(func.count(Note.id)).where(Note.user_id == user_id, Note.is_archived == True)
+        return await get_scalar_result(self.db, stmt)
     
     async def get_my_notes(self, user_id: int, limit: int, 
                         cursor_updated_at: datetime | None = None, 

@@ -41,7 +41,8 @@ class UserService:
             "id": user.id,
             "name": user.name,
             "username": user.username,
-            "notes_count": await self.note_repo.get_notes_count(user.id)
+            "all_notes_count": await self.note_repo.get_notes_count(user.id),
+            "archived_notes_count": await self.note_repo.get_archived_notes_count(user.id)
         }
     
     async def get_all_user_notes(self, username: str):

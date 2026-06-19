@@ -11,7 +11,8 @@ class UserShortResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 class UserProfileResponse(UserShortResponse):
-    notes_count: int
+    all_notes_count: int
+    archived_notes_count: int
     
     model_config = ConfigDict(from_attributes=True)
 
