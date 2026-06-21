@@ -202,3 +202,41 @@ export const getUserMeRequest = async (token) => {
         };
     }
 };
+
+export const editUserProfileRequest = async (name, username, token) => {
+    try {
+        const response = await fetch(`${API_URL}/users/me`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                name: name,
+                username: username
+            })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            return {
+                success: false,
+                detail: data.detail
+            };
+        };
+
+        return {
+            success: true,
+            ...data
+        };
+
+    } catch (error) {
+        showToast(error.message);
+
+        return {
+            success: false,
+            detail: "Network error"
+        };
+    }
+};

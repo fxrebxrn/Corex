@@ -1,7 +1,4 @@
-import { tokenCheckRequest } from "./api.js";
-import { renderNavBarProfile } from "./notes.js";
 import { renderRoute } from "./router.js";
-import { refreshToken } from "./auth.js";
 
 import './auth.js';
 import './notes.js';

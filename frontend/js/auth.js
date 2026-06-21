@@ -1,7 +1,7 @@
 import { loginRequest, registerRequest, checkUsernameRequest } from "./api.js";
 import { navigateTo } from "./router.js";
 import { saveTokens } from "./storage.js";
-import { showToast } from "./ui.js";
+import { showToast, formatErrorMessage } from "./ui.js";
 
 const showRegisterBtn = document.querySelector("#show-register-button");
 const showLoginBtn = document.querySelector("#show-login-button");
@@ -53,7 +53,7 @@ const login = async () => {
     const password = loginPasswordInput.value.trim();
 
     if (!username || !password) {
-        showToast("Please fill in all fields");
+        showToast("Please fill in all fields", "warning");
         if (!username) loginUsernameInput.classList.add("input-error");
         if (!password) loginPasswordInput.classList.add("input-error");
         return;
@@ -88,7 +88,7 @@ const register = async () => {
     const password = registerPasswordInput.value.trim();
 
     if (!username || !password || !email || !name) {
-        showToast("Please fill in all fields");
+        showToast("Please fill in all fields", "warning");
         if (!username) { registerUsernameInput.classList.add("input-error"); clearErrorOnInput(registerUsernameInput); }
         if (!password) { registerPasswordInput.classList.add("input-error"); clearErrorOnInput(registerPasswordInput); }
         if (!email) { registerEmailInput.classList.add("input-error"); clearErrorOnInput(registerEmailInput); }
@@ -149,17 +149,6 @@ const register = async () => {
 
     saveTokens(data.access_token, data.refresh_token);
     navigateTo("/app");
-};
-
-export const refreshToken = async (refresh_token) => {
-    const data = await refreshTokenRequest(refresh_token);
-
-    if (!data.success) {
-        return false;
-    }
-
-    saveTokens(data.access_token, data.refresh_token);
-    return true;
 };
 
 document.addEventListener("DOMContentLoaded", () => {

@@ -1,6 +1,6 @@
 import { renderNavBarProfile } from "./notes.js";
 import { tokenCheckRequest } from "./api.js";
-import { refreshToken } from "./auth.js";
+import { refreshToken } from "./storage.js";
 
 
 export const navigateTo = (path, replace = false) => {
@@ -33,6 +33,7 @@ export const renderRoute = async () => {
     if (!isAuthenticated) {
         localStorage.removeItem("access_token");
         localStorage.removeItem("refresh_token");
+        localStorage.removeItem("user_id");
 
         if (path !== "/auth") {
             window.history.replaceState({}, "", "/auth");
