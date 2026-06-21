@@ -1,54 +1,11 @@
-const navigateTo = (path, replace = false) => {
-    if (replace) {
-        window.history.replaceState({}, "", path);
-    } else {
-        window.history.pushState({}, "", path);
-    }
-    renderRoute();
-};
+import { tokenCheckRequest } from "./api.js";
+import { renderNavBarProfile } from "./notes.js";
+import { renderRoute } from "./router.js";
+import { refreshToken } from "./auth.js";
 
-const renderRoute = async () => {
-    let path = window.location.pathname;
-    const accessToken = localStorage.getItem("access_token");
-    const refresh_token = localStorage.getItem("refresh_token");
+import './auth.js';
+import './notes.js';
 
-    let isAuthenticated = false;
-
-    if (accessToken || refresh_token) {
-        const checkData = await tokenCheckRequest(accessToken);
-
-        if (checkData.success) {
-            isAuthenticated = true;
-        } else if (refresh_token) {
-            const isRefreshed = await refreshToken(refresh_token);
-            isAuthenticated = isRefreshed;
-        }
-    }
-
-    if (!isAuthenticated) {
-        localStorage.removeItem("access_token");
-        localStorage.removeItem("refresh_token");
-
-        if (path !== "/auth") {
-            window.history.replaceState({}, "", "/auth");
-            path = "/auth";
-        }
-    } else {
-        if (path !== "/app") {
-            window.history.replaceState({}, "", "/app");
-            path = "/app";
-        }
-        renderNavBarProfile(); 
-    }
-
-    document.querySelectorAll(".page").forEach((p) => p.classList.add("hidden"));
-
-    if (path === "/auth") {
-        document.getElementById("page-auth").classList.remove("hidden");
-    } else if (path === "/app") {
-        document.getElementById("page-app").classList.remove("hidden");
-    }
-};
 
 const initApp = () => {
     renderRoute();

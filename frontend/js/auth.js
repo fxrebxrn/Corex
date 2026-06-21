@@ -1,3 +1,8 @@
+import { loginRequest, registerRequest, checkUsernameRequest } from "./api.js";
+import { navigateTo } from "./router.js";
+import { saveTokens } from "./storage.js";
+import { showToast } from "./ui.js";
+
 const showRegisterBtn = document.querySelector("#show-register-button");
 const showLoginBtn = document.querySelector("#show-login-button");
 const registerBtn = document.querySelector("#register-button");
@@ -146,7 +151,7 @@ const register = async () => {
     navigateTo("/app");
 };
 
-const refreshToken = async (refresh_token) => {
+export const refreshToken = async (refresh_token) => {
     const data = await refreshTokenRequest(refresh_token);
 
     if (!data.success) {

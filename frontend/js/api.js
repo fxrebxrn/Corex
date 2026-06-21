@@ -1,7 +1,9 @@
+import { showToast } from "./ui.js";
+
 const API_URL = "http://127.0.0.1:8000/api";
 
 
-const checkUsernameRequest = async (username) => {
+export const checkUsernameRequest = async (username) => {
     try {
         const response = await fetch(`${API_URL}/users/check/${username}`);
 
@@ -22,7 +24,7 @@ const checkUsernameRequest = async (username) => {
     }
 };
 
-const loginRequest = async (username, password) => {
+export const loginRequest = async (username, password) => {
     const formData = new URLSearchParams();
     formData.append("username", username);
     formData.append("password", password);
@@ -60,7 +62,7 @@ const loginRequest = async (username, password) => {
     }
 };
 
-const registerRequest = async (name, username, email, password) => {
+export const registerRequest = async (name, username, email, password) => {
     try {
         const response = await fetch(`${API_URL}/auth/register`, {
             method: "POST",
@@ -99,7 +101,7 @@ const registerRequest = async (name, username, email, password) => {
     }
 };
 
-const tokenCheckRequest = async (token) => {
+export const tokenCheckRequest = async (token) => {
     try {
         const response = await fetch(`${API_URL}/auth/check`, {
             method: "GET",
@@ -132,7 +134,7 @@ const tokenCheckRequest = async (token) => {
     }
 };
 
-const refreshTokenRequest = async (refresh_token) => {
+export const refreshTokenRequest = async (refresh_token) => {
     try {
         const response = await fetch(`${API_URL}/auth/refresh`, {
             method: "POST",
@@ -168,7 +170,7 @@ const refreshTokenRequest = async (refresh_token) => {
     }
 };
 
-const getUserMeRequest = async (token) => {
+export const getUserMeRequest = async (token) => {
     try {
         const response = await fetch(`${API_URL}/users/me`, {
             method: "GET",

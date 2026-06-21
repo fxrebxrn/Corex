@@ -1,3 +1,7 @@
+import { getUserMeRequest } from "./api.js";
+import { showToast } from "./ui.js";
+
+
 const getFirstLetter = (name) => {
     try {
         if (!name || typeof name !== "string") {
@@ -18,7 +22,7 @@ const getFirstLetter = (name) => {
     }
 };
 
-const renderNavBarProfile = async () => {
+export const renderNavBarProfile = async () => {
     try {
         const profileName = document.querySelector(".nav-user-name");
         const profileUsername = document.querySelector(".user-username");

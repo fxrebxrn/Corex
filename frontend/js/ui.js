@@ -1,4 +1,4 @@
-function showToast(message, duration = 4000) {
+export function showToast(message, duration = 4000) {
     let container = document.querySelector('#toast-container');
 
     const toast = document.createElement('div');
@@ -29,7 +29,7 @@ function showToast(message, duration = 4000) {
     }, duration);
 }
 
-const formatErrorMessage = (errorItem, fieldName) => {
+export const formatErrorMessage = (errorItem, fieldName) => {
     const friendlyName = fieldName.charAt(0).toUpperCase() + fieldName.slice(1);
 
     switch (errorItem.type) {

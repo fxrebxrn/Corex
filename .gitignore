@@ -7,3 +7,10 @@ app.log
 terminal.bat
 tests/
 pytest.ini
+node_modules/
+.pnpm-store/
+dist/
+dist-ssr/
+*.local
+.DS_Store
+Thumbs.db
