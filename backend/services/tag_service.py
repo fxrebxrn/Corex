@@ -40,7 +40,6 @@ class TagService:
         
         new_tag = Tag(
             name=tag.name,
-            color=tag.color,
             user_id=current_user.id,
         )
 
@@ -63,7 +62,6 @@ class TagService:
             raise HTTPException(status_code=400, detail="Tag already exists")
 
         tag_to_update.name = tag.name
-        tag_to_update.color = tag.color
 
         await self.db.flush()
         await self.db.refresh(tag_to_update)

@@ -9,7 +9,6 @@ class Tag(TimestampMixin, Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
     name: Mapped[str] = mapped_column(String(16), nullable=False, index=True)
-    color: Mapped[str] = mapped_column(String(7), nullable=False)
 
     notes: Mapped[list["Note"]] = relationship(secondary="note_tags", back_populates="tags")
     user: Mapped["User"] = relationship(back_populates="tags")
