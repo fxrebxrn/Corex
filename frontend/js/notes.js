@@ -1,9 +1,11 @@
-import { getUserMeRequest, editUserProfileRequest } from "./api.js";
+import { getUserMeRequest, editUserProfileRequest, logoutRequest } from "./api.js";
 import { showToast } from "./ui.js";
+import { navigateTo } from "./router.js";
 
 const appModalsWindow = document.querySelector(".app-modals");
 const accountModal = document.querySelector(".account-modal"); 
 const accountModalClose = document.querySelector(".account-form-cancel");
+const accountModalLogout = document.querySelector(".account-form-logout");
 const accountFrom = document.querySelector("#profile-form");
 
 const myProfileBtn = document.querySelector("#nav-userInfo");
@@ -15,13 +17,13 @@ let userUsername = null;
 const getFirstLetter = (name) => {
     try {
         if (!name || typeof name !== "string") {
-            throw new Error("Invalid name provided");
+            showToast("Invalid name provided");
         }
 
         const trimmedName = name.trim();
 
         if (trimmedName.length === 0) {
-            throw new Error("Name is empty or contains only spaces");
+            showToast("Name is empty or contains only spaces");
         }
 
         return trimmedName.charAt(0).toUpperCase();
@@ -45,13 +47,13 @@ export const renderNavBarProfile = async () => {
         const accessToken = localStorage.getItem("access_token");
         
         if (!accessToken) {
-            throw new Error("Access token not found in storage");
+            showToast("Access token not found in storage");
         };
 
         const data = await getUserMeRequest(accessToken);
 
         if (!data || !data.success) {
-            throw new Error(data?.detail || "Failed to fetch user profile data");
+            showToast(data?.detail || "Failed to fetch user profile data");
         };
 
         localStorage.setItem("user_id", data.id);
@@ -136,7 +138,7 @@ accountFrom.addEventListener("submit", async (e) => {
         );
 
         if (!data || !data.success) {
-            throw new Error(data?.detail || "Failed to fetch user profile data");
+            showToast(data?.detail || "Failed to fetch user profile data");
         }
 
         closeModal(accountModal);
@@ -145,4 +147,32 @@ accountFrom.addEventListener("submit", async (e) => {
     } catch (error) {
         showToast(`Failed to update profile: ${error.message}`);
     }
+});
+
+accountModalLogout.addEventListener("click", async () => {
+    try {
+        if (localStorage.getItem("access_token") && localStorage.getItem("refresh_token")) {
+            const data = await logoutRequest(localStorage.getItem("access_token"), localStorage.getItem("refresh_token"));
+
+            if (!data || !data.success) {
+                showToast(data?.detail || "Failed to logout");
+            };
+
+            localStorage.removeItem("access_token");
+            localStorage.removeItem("refresh_token");
+            localStorage.removeItem("user_id");
+            appModalsWindow.classList.remove("is-open");
+            accountModal.classList.remove("is-open");
+            navigateTo("/auth");
+        } else {
+            localStorage.removeItem("access_token");
+            localStorage.removeItem("refresh_token");
+            localStorage.removeItem("user_id");
+            appModalsWindow.classList.remove("is-open");
+            accountModal.classList.remove("is-open");
+            navigateTo("/auth");
+        };
+    } catch (error) {
+        showToast(`Failed to logout: ${error.message}`);
+    };
 });

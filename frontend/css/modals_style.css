@@ -196,13 +196,15 @@
 }
 
 .account-form-cancel,
-.account-form-submit {
+.account-form-submit,
+.account-form-logout {
     height: 36px;
     border-radius: var(--modal-radius-md);
     font-size: 13px;
     font-weight: 500;
     font-family: var(--modal-font);
     cursor: pointer;
+    line-height: 0px;
     user-select: none;
     box-sizing: border-box;
     transition: background 0.14s, color 0.14s, transform 0.1s;
@@ -235,6 +237,23 @@
 
 .account-form-submit:hover {
     background: #3b7ee6;
+}
+
+.account-form-logout {
+    grid-column: span 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: 1px solid var(--modal-border);
+    color: var(--modal-text-muted);
+    text-align: center;
+}
+
+.account-form-logout:hover {
+    background: var(--modal-bg-hover);
+    border-color: var(--modal-border);
+    color: var(--modal-text-primary);
 }
 
 .tag-modal-title h1 {
