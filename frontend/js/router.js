@@ -1,6 +1,7 @@
 import { renderNavBarProfile } from "./notes.js";
 import { tokenCheckRequest } from "./api.js";
 import { refreshToken } from "./storage.js";
+import { renderSidebarTags } from "./tags.js";
 
 
 export const navigateTo = (path, replace = false) => {
@@ -8,7 +9,7 @@ export const navigateTo = (path, replace = false) => {
         window.history.replaceState({}, "", path);
     } else {
         window.history.pushState({}, "", path);
-    }
+    };
     renderRoute();
 };
 
@@ -44,7 +45,8 @@ export const renderRoute = async () => {
             window.history.replaceState({}, "", "/app");
             path = "/app";
         }
-        renderNavBarProfile(); 
+        renderNavBarProfile();
+        renderSidebarTags();
     }
 
     document.querySelectorAll(".page").forEach((p) => p.classList.add("hidden"));

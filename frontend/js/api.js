@@ -277,3 +277,36 @@ export const logoutRequest = async (access_token, refresh_token) => {
         };
     }
 };
+
+export const getUserTagsRequest = async (token) => {
+    try {
+        const response = await fetch(`${API_URL}/tags/me`, {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${token}`
+            }
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            return {
+                success: false,
+                detail: data.detail
+            };
+        };
+
+        return {
+            success: true,
+            tags: data
+        };
+
+    } catch (error) {
+        showToast(error.message);
+
+        return {
+            success: false,
+            detail: "Network error"
+        };
+    }
+};
