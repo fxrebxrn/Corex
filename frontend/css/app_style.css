@@ -17,19 +17,9 @@
     --app-accent:         #4f8ef7;
     --app-accent-dim:     rgba(79, 142, 247, 0.15);
 
-    --app-tag-red:        #e05252;
-    --app-tag-green:      #4caf7d;
-    --app-tag-orange:     #e08c3a;
-    --app-tag-teal:       #3ab8b8;
-    --app-tag-blue:       #4f8ef7;
-    --app-tag-purple:     #9b6ef7;
+    --app-tag-red:        #448eca;
 
-    --app-tag-red-bg:     rgba(224, 82, 82, 0.12);
-    --app-tag-green-bg:   rgba(76, 175, 125, 0.12);
-    --app-tag-orange-bg:  rgba(224, 140, 58, 0.12);
-    --app-tag-teal-bg:    rgba(58, 184, 184, 0.12);
-    --app-tag-blue-bg:    rgba(79, 142, 247, 0.12);
-    --app-tag-purple-bg:  rgba(155, 110, 247, 0.12);
+    --app-tag-red-bg:     rgba(55, 129, 172, 0.12);
 
     --app-nav-sidebar-w:  204px;
     --app-notes-sidebar-w: 270px;
@@ -288,14 +278,8 @@
     height: 7px;
     border-radius: 50%;
     flex-shrink: 0;
+    background: var(--app-tag-red);
 }
-
-.nav-tag-dot-red    { background: var(--app-tag-red); }
-.nav-tag-dot-green  { background: var(--app-tag-green); }
-.nav-tag-dot-orange { background: var(--app-tag-orange); }
-.nav-tag-dot-teal   { background: var(--app-tag-teal); }
-.nav-tag-dot-blue   { background: var(--app-tag-blue); }
-.nav-tag-dot-purple { background: var(--app-tag-purple); }
 
 .nav-tag-name {
     flex: 1;
@@ -658,6 +642,19 @@
     flex-shrink: 0;
 }
 
+.note-tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 7px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 500;
+    white-space: nowrap;
+    cursor: default;
+    background: var(--app-tag-red-bg);
+    color: var(--app-tag-red);
+}
+
 .tag {
     display: inline-flex;
     align-items: center;
@@ -667,40 +664,6 @@
     font-weight: 500;
     white-space: nowrap;
     cursor: default;
-}
-
-.tag-0 {
-    color: var(--app-text-secondary);
-}
-
-.tag-1 {
-    background: var(--app-tag-red-bg);
-    color: var(--app-tag-red);
-}
-
-.tag-2 {
-    background: var(--app-tag-green-bg);
-    color: var(--app-tag-green);
-}
-
-.tag-3 {
-    background: var(--app-tag-orange-bg);
-    color: var(--app-tag-orange);
-}
-
-.tag-4 {
-    background: var(--app-tag-teal-bg);
-    color: var(--app-tag-teal);
-}
-
-.tag-5 {
-    background: var(--app-tag-blue-bg);
-    color: var(--app-tag-blue);
-}
-
-.tag-6 {
-    background: var(--app-tag-purple-bg);
-    color: var(--app-tag-purple);
 }
 
 .resizer {
