@@ -310,3 +310,77 @@ export const getUserTagsRequest = async (token) => {
         };
     }
 };
+
+export const deleteTagRequest = async (tag_id, token) => {
+    try {
+        const response = await fetch(`${API_URL}/tags/${tag_id}`, {
+            method: "DELETE",
+            headers: {
+                "Authorization": `Bearer ${token}`
+            }
+        });
+
+        if (response.status === 204 || response.status === 200) {
+            return { success: true };
+        }
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            return {
+                success: false,
+                detail: data.detail
+            };
+        }
+
+        return {
+            success: true,
+            ...data
+        };
+
+    } catch (error) {
+        showToast(error.message);
+
+        return {
+            success: false,
+            detail: "Network error"
+        };
+    }
+};
+
+export const createTagRequest = async (token, tagName) => {
+    try {
+        const response = await fetch(`${API_URL}/tags`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify({
+                name: tagName
+            })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            return {
+                success: false,
+                detail: data.detail
+            };
+        };
+
+        return {
+            success: true,
+            ...data
+        };
+
+    } catch (error) {
+        showToast(error.message);
+
+        return {
+            success: false,
+            detail: "Network error"
+        };
+    }
+};

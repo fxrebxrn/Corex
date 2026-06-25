@@ -1,3 +1,5 @@
+const appModalsWindow = document.querySelector(".app-modals");
+
 export function showToast(message, type = 'error', duration = 4000) {
     const container = document.querySelector('#toast-container');
 
@@ -53,3 +55,29 @@ export const formatErrorMessage = (errorItem, fieldName) => {
             return errorItem.msg.replace("String", friendlyName);
     }
 };
+
+export const closeModal = (modal) => {
+    appModalsWindow.classList.add('is-closing');
+    modal.classList.add('is-closing');
+
+    appModalsWindow.classList.remove('is-open');
+    modal.classList.remove('is-open');
+
+    setTimeout(() => {
+        appModalsWindow.classList.remove('is-closing');
+        modal.classList.remove('is-closing');
+    }, 300);
+}
+
+if (appModalsWindow) {
+    appModalsWindow.addEventListener('click', (event) => {
+        if (event.target === event.currentTarget) {
+
+            const activeModal = appModalsWindow.querySelector('.is-open');
+            
+            if (activeModal) {
+                closeModal(activeModal);
+            }
+        }
+    });
+}

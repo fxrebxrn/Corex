@@ -1,5 +1,74 @@
-import { getUserTagsRequest } from "./api.js";
+import { getUserTagsRequest, deleteTagRequest, createTagRequest } from "./api.js";
+import { showToast, closeModal } from "./ui.js";
 
+const appModalsWindow = document.querySelector(".app-modals");
+const deleteTagModal = document.querySelector(".delete-tag-modal");
+const confirmBtnCancel = document.querySelector("#confirm-tag-btn-cancel");
+const confirmBtnDelete = document.querySelector("#confirm-tag-btn-delete");
+
+const createTagModal = document.querySelector(".tag-modal");
+const createTagForm = document.querySelector(".tag-form");
+const createTagBtnCancel = document.querySelector(".tag-form-cancel");
+const createTagBtn = document.querySelector(".nav-tags-add-btn");
+
+let tagToDeleteId = null;
+
+createTagBtn.addEventListener("click", () => {
+    appModalsWindow.classList.add("is-open");
+    createTagModal.classList.add("is-open");
+});
+
+createTagForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const accessToken = localStorage.getItem("access_token");
+    
+    if (!accessToken) {
+        showToast("Access token not found");
+        return;
+    };
+
+    const createTagNameInput = document.querySelector("#tag-name-input");
+
+    const data = await createTagRequest(accessToken, createTagNameInput.value);
+
+    if (!data || !data.success) {
+        showToast(data?.detail || "Failed to create tag");
+        return;
+    };
+
+    closeModal(createTagModal);
+    renderSidebarTags();
+    showToast("Tag created successfully", "success");
+});
+
+createTagBtnCancel.addEventListener("click", () => {
+    closeModal(createTagModal);
+});
+
+confirmBtnCancel.addEventListener("click", () => {closeModal(deleteTagModal)});
+
+confirmBtnDelete.addEventListener("click", async () => {
+    if (!tagToDeleteId) return;
+
+    const accessToken = localStorage.getItem("access_token");
+    
+    if (!accessToken) {
+        showToast("Access token not found");
+        return;
+    }
+
+    const data = await deleteTagRequest(tagToDeleteId, accessToken);
+
+    if (!data || !data.success) {
+        showToast(data?.detail || "Failed to delete tag");
+        return;
+    }
+
+    closeModal(deleteTagModal);
+    renderSidebarTags();
+    showToast("Tag deleted successfully", "success");
+});
 
 export const renderSidebarTags = async () => {
     try {
@@ -46,6 +115,14 @@ export const renderSidebarTags = async () => {
             const removeBtn = document.createElement("button");
             removeBtn.className = "nav-tag-remove-btn";
             removeBtn.title = "Remove filter";
+            
+            removeBtn.addEventListener("click", (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                tagToDeleteId = tag.id;
+                appModalsWindow.classList.add("is-open");
+                deleteTagModal.classList.add("is-open");
+            });
         
             const svgNS = "http://www.w3.org/2000/svg";
             const svgIcon = document.createElementNS(svgNS, "svg");

@@ -1,5 +1,5 @@
 import { getUserMeRequest, editUserProfileRequest, logoutRequest } from "./api.js";
-import { showToast } from "./ui.js";
+import { showToast, closeModal } from "./ui.js";
 import { navigateTo } from "./router.js";
 
 const appModalsWindow = document.querySelector(".app-modals");
@@ -86,32 +86,6 @@ export const renderNavBarProfile = async () => {
         showToast("Could not load profile information");
     }
 };
-
-const closeModal = (modal) => {
-    appModalsWindow.classList.add('is-closing');
-    modal.classList.add('is-closing');
-
-    appModalsWindow.classList.remove('is-open');
-    modal.classList.remove('is-open');
-
-    setTimeout(() => {
-        appModalsWindow.classList.remove('is-closing');
-        modal.classList.remove('is-closing');
-    }, 300);
-}
-
-if (appModalsWindow) {
-    appModalsWindow.addEventListener('click', (event) => {
-        if (event.target === event.currentTarget) {
-
-            const activeModal = appModalsWindow.querySelector('.is-open');
-            
-            if (activeModal) {
-                closeModal(activeModal);
-            }
-        }
-    });
-}
 
 myProfileBtn.addEventListener("click", () => {
     appModalsWindow.classList.add("is-open");
