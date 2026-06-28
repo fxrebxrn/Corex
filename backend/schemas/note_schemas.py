@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, ConfigDict
+from pydantic import BaseModel, Field, ConfigDict, computed_field
 from schemas.user_schemas import UserShortResponse
 from schemas.tag_schemas import TagOut
 from datetime import datetime
@@ -7,15 +7,20 @@ from schemas.util_schemas import Cursor
 
 class NoteShortResponse(BaseModel):
     id: int
-    title: str = Field(min_length=1, max_length=50)
-    updated_at: datetime
+    title: str
+    content: str | None = Field(default=None, exclude=True) 
     is_pinned: bool
-    pinned_position: int | None
+    pinned_position: int | None = None
+    updated_at: datetime
     user: UserShortResponse
     tags: list[TagOut]
 
     model_config = ConfigDict(from_attributes=True)
 
+    @computed_field
+    @property
+    def pre_content(self) -> str | None:
+        return self.content[:100] if self.content else None
 
 class NoteFinalize(BaseModel):
     title: str | None = Field(default=None, max_length=255)
@@ -45,3 +50,6 @@ class PaginatedNotesResponse(BaseModel):
 
 class ReorderPinnedRequest(BaseModel):
     ordered_ids: list[int]
+
+class SyncNoteTagRequest(BaseModel):
+    tag_ids: list[int]

@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from utils.query_helpers import fetch_first_by_stmt, fetch_all_by_stmt, get_scalar_result
 from models.note import Note
-from models.tag import NoteTag
+from models.tag import NoteTag, Tag
 from sqlalchemy import select, func, or_, and_
 from sqlalchemy.orm import selectinload
 from datetime import datetime
@@ -107,3 +107,11 @@ class NoteRepository:
     async def get_tag_note(self, note_id: int, tag_id: int):
         stmt = select(NoteTag).where(NoteTag.note_id == note_id, NoteTag.tag_id == tag_id)
         return await fetch_first_by_stmt(self.db, stmt)
+    
+    async def get_user_tags_by_ids(self, user_id: int, tag_ids: list[int]) -> list[Tag]:
+        if not tag_ids:
+            return []
+        
+        stmt = select(Tag).where(Tag.id.in_(tag_ids), Tag.user_id == user_id)
+        result = await self.db.execute(stmt)
+        return list(result.scalars().all())

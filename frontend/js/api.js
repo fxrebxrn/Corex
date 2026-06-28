@@ -384,3 +384,170 @@ export const createTagRequest = async (token, tagName) => {
         };
     }
 };
+
+export const getUserPinnedNotesRequest = async (token) => {
+    try {
+        const response = await fetch(`${API_URL}/notes/me/pinned`, {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${token}`
+            }
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            return {
+                success: false,
+                detail: data.detail
+            };
+        };
+
+        return {
+            success: true,
+            notes: data
+        };
+
+    } catch (error) {
+        showToast(error.message);
+
+        return {
+            success: false,
+            detail: "Network error"
+        };
+    }
+};
+
+export const archiveNoteRequest = async (token, note_id) => {
+    try {
+        const response = await fetch(`${API_URL}/notes/${note_id}/archive`, {
+            method: "PATCH",
+            headers: {
+                "Authorization": `Bearer ${token}`
+            }
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            return {
+                success: false,
+                detail: data.detail
+            };
+        };
+
+        return {
+            success: true,
+            ...data
+        };
+
+    } catch (error) {
+        showToast(error.message);
+
+        return {
+            success: false,
+            detail: "Network error"
+        };
+    }
+};
+
+export const pinNoteRequest = async (token, note_id) => {
+    try {
+        const response = await fetch(`${API_URL}/notes/${note_id}/pin`, {
+            method: "PATCH",
+            headers: {
+                "Authorization": `Bearer ${token}`
+            }
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            return {
+                success: false,
+                detail: data.detail
+            };
+        };
+
+        return {
+            success: true,
+            ...data
+        };
+
+    } catch (error) {
+        showToast(error.message);
+
+        return {
+            success: false,
+            detail: "Network error"
+        };
+    }
+};
+
+export const deleteNoteRequest = async (token, note_id) => {
+    try {
+        const response = await fetch(`${API_URL}/notes/me/${note_id}`, {
+            method: "DELETE",
+            headers: {
+                "Authorization": `Bearer ${token}`
+            }
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            return {
+                success: false,
+                detail: data.detail
+            };
+        };
+
+        return {
+            success: true,
+            ...data
+        };
+
+    } catch (error) {
+        showToast(error.message);
+
+        return {
+            success: false,
+            detail: "Network error"
+        };
+    }
+};
+
+export const syncNoteTagsRequest = async (token, note_id, tag_ids) => {
+    try {
+        const response = await fetch(`${API_URL}/notes/me/${note_id}/tags`, {
+            method: "PUT",
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ tag_ids: tag_ids })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            return {
+                success: false,
+                detail: data.detail || "Failed to sync tags"
+            };
+        }
+
+        return {
+            success: true,
+            ...data
+        };
+
+    } catch (error) {
+        showToast(error.message);
+
+        return {
+            success: false,
+            detail: "Network error"
+        };
+    }
+};

@@ -1,4 +1,4 @@
-import { getUserTagsRequest, deleteTagRequest, createTagRequest } from "./api.js";
+import { getUserTagsRequest, deleteTagRequest, createTagRequest, syncNoteTagsRequest } from "./api.js";
 import { showToast, closeModal } from "./ui.js";
 
 const appModalsWindow = document.querySelector(".app-modals");
@@ -150,4 +150,100 @@ export const renderSidebarTags = async () => {
     } catch (error) {
         showToast("Could not load tags information");
     }
+};
+
+export const openAttachTagModal = async (noteId, currentTags, onSuccess) => {
+    const appModalsWindow = document.querySelector(".app-modals");
+    const noteTagsModal = document.querySelector(".note-tags-modal");
+    const tagsListContainer = document.querySelector(".note-tags-list");
+    const cancelBtn = document.querySelector(".note-tags-cancel");
+    const submitBtn = document.querySelector(".note-tags-submit");
+
+    if (!noteTagsModal || !appModalsWindow) return;
+
+    appModalsWindow.classList.add("is-open");
+    noteTagsModal.classList.add("is-open");
+
+    const accessToken = localStorage.getItem("access_token");
+    if (!accessToken) {
+        showToast("Access token not found");
+        return;
+    }
+
+    const data = await getUserTagsRequest(accessToken);
+    if (!data || !data.success) {
+        showToast(data?.detail || "Failed to load tags");
+        return;
+    }
+
+    const allTags = data.tags || [];
+    const currentTagIds = currentTags.map(t => t.id);
+
+    tagsListContainer.replaceChildren();
+    tagsListContainer.innerHTML = "";
+
+    const colors = ["is-red", "is-blue", "is-green", "is-purple"];
+
+    allTags.forEach((tag, index) => {
+        const label = document.createElement("label");
+        label.className = "tag-select-item";
+
+        const input = document.createElement("input");
+        input.type = "checkbox";
+        input.name = "note-tag";
+        input.value = tag.id;
+        input.checked = currentTagIds.includes(tag.id);
+
+        const dotSpan = document.createElement("span");
+        dotSpan.className = `tag-select-dot is-blue`;
+
+        const nameSpan = document.createElement("span");
+        nameSpan.className = "tag-select-name";
+        nameSpan.textContent = tag.name;
+
+        const boxSpan = document.createElement("span");
+        boxSpan.className = "tag-select-box";
+
+        const svgNS = "http://www.w3.org/2000/svg";
+        const svg = document.createElementNS(svgNS, "svg");
+        svg.setAttribute("viewBox", "0 0 12 12");
+        
+        const path = document.createElementNS(svgNS, "path");
+        path.setAttribute("d", "M2 6.5L4.5 9L10 3");
+        path.setAttribute("stroke-width", "2");
+        path.setAttribute("stroke-linecap", "round");
+        path.setAttribute("stroke-linejoin", "round");
+        
+        svg.appendChild(path);
+        boxSpan.appendChild(svg);
+
+        label.append(input, dotSpan, nameSpan, boxSpan);
+        tagsListContainer.appendChild(label);
+    });
+
+    cancelBtn.onclick = () => {
+        closeModal(noteTagsModal);
+    };
+
+    submitBtn.onclick = async () => {
+        const checkedInputs = Array.from(tagsListContainer.querySelectorAll("input:checked"));
+        const selectedTagIds = checkedInputs.map(input => parseInt(input.value));
+
+        try {
+            submitBtn.disabled = true;
+            const response = await syncNoteTagsRequest(accessToken, noteId, selectedTagIds);
+
+            if (response && response.success) {
+                showToast("Tags updated successfully", "success");
+                closeModal(noteTagsModal);
+                if (onSuccess) onSuccess();
+            } else {
+                showToast(response?.detail || "Failed to update tags");
+            }
+        } catch (error) {
+            showToast("Failed to update tags");
+        } finally {
+            submitBtn.disabled = false;
+        }
+    };
 };

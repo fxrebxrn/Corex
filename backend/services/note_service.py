@@ -1,6 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from repositories.note_repository import NoteRepository
-from schemas.note_schemas import NoteFinalize
+from schemas.note_schemas import NoteFinalize, SyncNoteTagRequest
 from models.note import Note
 from models.tag import NoteTag
 from fastapi import HTTPException
@@ -51,7 +51,7 @@ class NoteService:
         await self.db.flush()
         await self.db.refresh(new_note)
         
-        return new_note
+        return {"detail": "Note created successfully"}
     
     async def finalize_note(self, note_id: int, user_id: int, note_data: NoteFinalize) -> Note | None:
         note = await self.get_by_id_my(note_id, user_id)
@@ -92,7 +92,7 @@ class NoteService:
         
         has_more = len(notes_desc) > limit
         items = notes_desc[:limit]
-
+        
         next_cursor = None
         if has_more and items:
             oldest_item = items[-1]
@@ -145,7 +145,9 @@ class NoteService:
         await self.repo.db.flush()
         await self.repo.db.refresh(note)
         
-        return note
+        return {
+            "detail": "Successfully note pinned" if note.is_pinned else "Successfully note unpinned",
+        }
 
     async def toggle_archive_note(self, user_id: int, note_id: int):
         note = await self.get_by_id_my(note_id, user_id)
@@ -198,46 +200,25 @@ class NoteService:
         await self.db.flush()
 
         return {"detail": "Successfully note deleted"}
-
-    async def add_tag_to_note(self, note_id: int, tag_id: int, user_id: int):
-        note = await self.get_by_id_my(note_id, user_id)
-        await self.tag_service.get_by_id_my(tag_id, user_id)
-
-        tag_note_exists = await self.repo.get_tag_note(note_id, tag_id)
-        if tag_note_exists:
-            raise HTTPException(
-                status_code=400,
-                detail="Note already has this tag"
-            )
-
-        note_tag = NoteTag(
-            note_id=note_id,
-            tag_id=tag_id
-            )
-        self.db.add(note_tag)
-
-        await self.db.flush()
-        await self.db.refresh(note)
-
-        return note
-    
-    async def remove_tag_from_note(self, note_id: int, tag_id: int, user_id: int):
-        note = await self.get_by_id_my(note_id, user_id)
-        await self.tag_service.get_by_id_my(tag_id, user_id)
-
-        tag_note = await self.repo.get_tag_note(note_id, tag_id)
-        if not tag_note:
-            raise HTTPException(
-                status_code=400,
-                detail="Note already does not have this tag"
-            )
-
-        await self.db.delete(tag_note)
-
-        await self.db.flush()
-        await self.db.refresh(note)
-
-        return note
     
     async def get_pinned_notes(self, user_id: int):
         return await self.repo.get_pinned_notes(user_id)
+
+    async def sync_note_tags(self, note_id: int, user_id: int, tag_ids: list[int]) -> Note:
+        note = await self.get_by_id_my(note_id, user_id)
+        valid_tags = await self.repo.get_user_tags_by_ids(user_id, tag_ids)
+        
+        if len(valid_tags) != len(tag_ids):
+            raise HTTPException(
+                status_code=400,
+                detail="One or more tag IDs are invalid or do not belong to you"
+            )
+            
+        note.tags = valid_tags
+
+        await self.db.flush()
+        await self.db.refresh(note)
+        
+        return {
+            "detail": "Successfully synced note tags"
+            }

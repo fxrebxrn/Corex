@@ -1,4 +1,4 @@
-import { renderNavBarProfile } from "./notes.js";
+import { renderNavBarProfile, renderPinnedNotesWithTags } from "./notes.js";
 import { tokenCheckRequest } from "./api.js";
 import { refreshToken } from "./storage.js";
 import { renderSidebarTags } from "./tags.js";
@@ -47,6 +47,7 @@ export const renderRoute = async () => {
         }
         renderNavBarProfile();
         renderSidebarTags();
+        renderPinnedNotesWithTags();
     }
 
     document.querySelectorAll(".page").forEach((p) => p.classList.add("hidden"));

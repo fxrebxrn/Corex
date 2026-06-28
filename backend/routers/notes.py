@@ -5,7 +5,7 @@ from typing import Annotated
 from services.note_service import NoteService
 from sqlalchemy.ext.asyncio import AsyncSession
 from core.database import get_db
-from schemas.note_schemas import NoteResponse, NoteFinalize, PaginatedNotesResponse, NoteShortResponse, ReorderPinnedRequest
+from schemas.note_schemas import NoteResponse, NoteFinalize, PaginatedNotesResponse, NoteShortResponse, ReorderPinnedRequest, SyncNoteTagRequest
 from schemas.util_schemas import DetailResponse
 from fastapi import Response, Query
 from starlette import status
@@ -14,12 +14,7 @@ from datetime import datetime
 
 router = APIRouter(prefix="/api/notes", tags=["Notes"])
 
-@router.post("/me/{note_id}/tags/{tag_id}", response_model=NoteResponse)
-async def add_tag_to_note(note_id: int, tag_id: int, current_user: Annotated[User, Depends(get_current_user)], db: Annotated[AsyncSession, Depends(get_db)]):
-    service = NoteService(db)
-    return await service.add_tag_to_note(note_id, tag_id, current_user.id)
-
-@router.post("/", response_model=NoteResponse)
+@router.post("/", response_model=DetailResponse)
 async def create_empty_note(current_user: Annotated[User, Depends(get_current_user)], db: Annotated[AsyncSession, Depends(get_db)]):
     service = NoteService(db)
     return await service.create_empty_note(current_user.id)
@@ -67,7 +62,7 @@ async def get_public_note(note_id: int, db: Annotated[AsyncSession, Depends(get_
     service = NoteService(db)
     return await service.get_by_id_public(note_id)
 
-@router.patch("/{note_id}/pin", response_model=NoteShortResponse)
+@router.patch("/{note_id}/pin", response_model=DetailResponse)
 async def toggle_pin_note(note_id: int, current_user: Annotated[User, Depends(get_current_user)], db: Annotated[AsyncSession, Depends(get_db)]):
     service = NoteService(db)
     return await service.toggle_pin_note(current_user.id, note_id)
@@ -92,12 +87,17 @@ async def finalize_note(note_id: int, note_data: NoteFinalize, current_user: Ann
         
     return result
 
+@router.put("/me/{note_id}/tags", response_model=DetailResponse)
+async def sync_note_tags(
+    note_id: int,
+    data: SyncNoteTagRequest,
+    current_user: Annotated[User, Depends(get_current_user)],
+    db: Annotated[AsyncSession, Depends(get_db)]
+):
+    service = NoteService(db)
+    return await service.sync_note_tags(note_id, current_user.id, data.tag_ids)
+
 @router.delete("/me/{note_id}", response_model=DetailResponse)
 async def delete_note(note_id: int, current_user: Annotated[User, Depends(get_current_user)], db: Annotated[AsyncSession, Depends(get_db)]):
     service = NoteService(db)
     return await service.delete_note(current_user.id, note_id)
-
-@router.delete("/me/{note_id}/tags/{tag_id}", response_model=NoteResponse)
-async def remove_tag_from_note(note_id: int, tag_id: int, current_user: Annotated[User, Depends(get_current_user)], db: Annotated[AsyncSession, Depends(get_db)]):
-    service = NoteService(db)
-    return await service.remove_tag_from_note(note_id, tag_id, current_user.id)

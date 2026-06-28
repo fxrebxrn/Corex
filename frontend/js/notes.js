@@ -1,5 +1,5 @@
-import { getUserMeRequest, editUserProfileRequest, logoutRequest } from "./api.js";
-import { showToast, closeModal } from "./ui.js";
+import { getUserMeRequest, editUserProfileRequest, logoutRequest, getUserPinnedNotesRequest, deleteNoteRequest, syncNoteTagsRequest } from "./api.js";
+import { showToast, closeModal, setActiveNoteCard, setCurrentNoteIdForMenu, formatTimeAgo } from "./ui.js";
 import { navigateTo } from "./router.js";
 
 const appModalsWindow = document.querySelector(".app-modals");
@@ -7,12 +7,218 @@ const accountModal = document.querySelector(".account-modal");
 const accountModalClose = document.querySelector(".account-form-cancel");
 const accountModalLogout = document.querySelector(".account-form-logout");
 const accountFrom = document.querySelector("#profile-form");
-
+const optionsMenu = document.querySelector(".note-options-menu");
+const deleteModal = document.querySelector(".delete-note-modal");
+const confirmNoteBtnCancel = document.querySelector("#confirm-note-btn-cancel");
+const confirmNoteBtnDelete = document.querySelector("#confirm-note-btn-delete");
 const myProfileBtn = document.querySelector("#nav-userInfo");
+const confirmTagsBtn = document.querySelector(".note-tags-submit");
 
 let userName = null;
 let userUsername = null;
 
+
+export const renderPinnedNotesWithTags = async () => {
+    try {
+        const notesContainer = document.querySelector(".notes-container");
+        if (!notesContainer) return;
+
+        const accessToken = localStorage.getItem("access_token");
+        
+        if (!accessToken) {
+            showToast("Access token not found in storage");
+            return;
+        }
+
+        const data = await getUserPinnedNotesRequest(accessToken);
+
+        if (!data || !data.success) {
+            showToast(data?.detail || "Failed to fetch user notes");
+            return;
+        }
+
+        const pinnedNotes = data.notes || [];
+
+        if (pinnedNotes.length === 0) {
+            notesContainer.replaceChildren();
+            return;
+        }
+
+        pinnedNotes.sort((a, b) => (a.pinned_position || 0) - (b.pinned_position || 0));
+
+        notesContainer.replaceChildren();
+
+        const svgNS = "http://www.w3.org/2000/svg";
+        const optionsMenu = document.querySelector(".note-options-menu");
+
+        pinnedNotes.forEach(note => {
+            const noteCard = document.createElement("div");
+            noteCard.className = "note-card";
+            noteCard.id = `note-${note.id}`;
+
+            const noteCardHeader = document.createElement("header");
+            noteCardHeader.className = "note-card-header";
+
+            const noteCardTitle = document.createElement("h2");
+            noteCardTitle.className = "note-card-title";
+
+            const noteCardPinnedIcon = document.createElement("span");
+            noteCardPinnedIcon.className = "note-card-pinned-icon";
+            
+            const pinSvg = document.createElementNS(svgNS, "svg");
+            pinSvg.setAttribute("width", "1em");
+            pinSvg.setAttribute("height", "1em");
+            pinSvg.setAttribute("viewBox", "0 0 24 24");
+            
+            const pinTitle = document.createElementNS(svgNS, "title");
+            pinTitle.textContent = "pin";
+            
+            const pinPath = document.createElementNS(svgNS, "path");
+            pinPath.setAttribute("fill", "none");
+            pinPath.setAttribute("stroke", "currentColor");
+            pinPath.setAttribute("stroke-linecap", "round");
+            pinPath.setAttribute("stroke-linejoin", "round");
+            pinPath.setAttribute("stroke-width", "2");
+            pinPath.setAttribute("d", "M12 17v5M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78.9A2 2 0 0 1 15 10.76V7a1 1 0 0 1 1-1a2 2 0 0 0 0-4H8a2 2 0 0 0 0 4a1 1 0 0 1 1 1z");
+            
+            pinSvg.append(pinTitle, pinPath);
+            noteCardPinnedIcon.appendChild(pinSvg);
+
+            const noteCardTitleText = document.createElement("p");
+            noteCardTitleText.textContent = note.title || "Untitled";
+
+            noteCardTitle.append(noteCardPinnedIcon, noteCardTitleText);
+
+            const noteCardOptionsBtn = document.createElement("button");
+            noteCardOptionsBtn.className = "note-card-options-btn";
+            
+            const optSvg = document.createElementNS(svgNS, "svg");
+            optSvg.setAttribute("width", "1em");
+            optSvg.setAttribute("height", "1em");
+            optSvg.setAttribute("viewBox", "0 0 24 24");
+
+            const optTitle = document.createElementNS(svgNS, "title");
+            optTitle.textContent = "Options";
+
+            const optGroup = document.createElementNS(svgNS, "g");
+            optGroup.setAttribute("fill", "none");
+            optGroup.setAttribute("stroke", "currentColor");
+            optGroup.setAttribute("stroke-linecap", "round");
+            optGroup.setAttribute("stroke-linejoin", "round");
+            optGroup.setAttribute("stroke-width", "2");
+
+            const circle1 = document.createElementNS(svgNS, "circle");
+            circle1.setAttribute("cx", "12");
+            circle1.setAttribute("cy", "12");
+            circle1.setAttribute("r", "1");
+
+            const circle2 = document.createElementNS(svgNS, "circle");
+            circle2.setAttribute("cx", "12");
+            circle2.setAttribute("cy", "5");
+            circle2.setAttribute("r", "1");
+
+            const circle3 = document.createElementNS(svgNS, "circle");
+            circle3.setAttribute("cx", "12");
+            circle3.setAttribute("cy", "19");
+            circle3.setAttribute("r", "1");
+
+            optGroup.append(circle1, circle2, circle3);
+            optSvg.append(optTitle, optGroup);
+            noteCardOptionsBtn.appendChild(optSvg);
+
+            noteCardHeader.append(noteCardTitle, noteCardOptionsBtn);
+
+            const noteCardPrev = document.createElement("p");
+            noteCardPrev.className = "note-card-preview";
+            noteCardPrev.textContent = note.pre_content || note.content || ""; 
+
+            const noteCardTags = document.createElement("section");
+            noteCardTags.className = "note-card-tags";
+
+            const tags = note.tags || [];
+            tags.forEach(tag => {
+                const tagItem = document.createElement("span");
+                tagItem.className = "note-tag";
+                tagItem.textContent = tag.name; 
+                noteCardTags.appendChild(tagItem);
+            });
+
+            const noteCardFooter = document.createElement("footer");
+            noteCardFooter.className = "note-card-footer";
+
+            const noteCardFooterTime = document.createElement("time");
+            const formattedDate = formatTimeAgo(note.updated_at);
+            noteCardFooterTime.setAttribute("datetime", note.updated_at || "");
+            noteCardFooterTime.textContent = formattedDate;
+
+            noteCardFooter.appendChild(noteCardFooterTime);
+
+            noteCard.append(noteCardHeader, noteCardPrev, noteCardTags, noteCardFooter);
+
+            notesContainer.appendChild(noteCard);
+
+            noteCard.addEventListener("click", () => {
+                setActiveNoteCard(noteCard);
+            });
+
+            noteCardOptionsBtn.addEventListener("click", (e) => {
+                e.stopPropagation();
+                if (!optionsMenu) return;
+                
+                if (optionsMenu.classList.contains("is-open") && optionsMenu.dataset.currentId == note.id) {
+                    optionsMenu.classList.remove("is-open");
+                    return;
+                }
+
+                setCurrentNoteIdForMenu(note.id);
+                optionsMenu.dataset.currentId = note.id;
+                optionsMenu.dataset.currentTags = JSON.stringify(note.tags || []);
+
+                const pinTextSpan = optionsMenu.querySelector(".menu-item:nth-of-type(1) .menu-item-text");
+                if (pinTextSpan) {
+                    pinTextSpan.textContent = note.is_pinned ? "Unpin" : "Pin Note";
+                }
+
+                const archiveTextSpan = optionsMenu.querySelector(".menu-item:nth-of-type(2) .menu-item-text");
+                if (archiveTextSpan) {
+                    archiveTextSpan.textContent = note.is_archived ? "Unarchive" : "Archive";
+                }
+                
+                const btnRect = noteCardOptionsBtn.getBoundingClientRect();
+                
+                optionsMenu.style.visibility = "hidden";
+                optionsMenu.style.display = "block";
+                
+                const menuWidth = 180;
+                const menuHeight = optionsMenu.offsetHeight;
+                
+                let topPos = btnRect.bottom + window.scrollY + 5;
+                let leftPos = btnRect.right + window.scrollX - menuWidth;
+
+                if (topPos + menuHeight > window.innerHeight + window.scrollY) {
+                    topPos = btnRect.top + window.scrollY - menuHeight - 5;
+                    optionsMenu.style.transformOrigin = "bottom right";
+                } else {
+                    optionsMenu.style.transformOrigin = "top right";
+                }
+
+                if (leftPos < window.scrollX) {
+                    leftPos = btnRect.left + window.scrollX;
+                    optionsMenu.style.transformOrigin = topPos < btnRect.top ? "bottom left" : "top left";
+                }
+
+                optionsMenu.style.top = `${topPos}px`;
+                optionsMenu.style.left = `${leftPos}px`;
+                optionsMenu.style.right = "auto";
+                
+                optionsMenu.style.visibility = "";
+                optionsMenu.classList.add("is-open");
+            });
+        });
+    } catch (error) {
+        showToast(`Error in renderPinnedNotesWithTags: ${error.message}`);
+    };
+};
 
 const getFirstLetter = (name) => {
     try {
@@ -150,3 +356,39 @@ accountModalLogout.addEventListener("click", async () => {
         showToast(`Failed to logout: ${error.message}`);
     };
 });
+
+if (confirmNoteBtnCancel && confirmNoteBtnDelete && deleteModal && appModalsWindow) {
+    confirmNoteBtnCancel.addEventListener("click", () => {
+        appModalsWindow.classList.remove("is-open");
+        deleteModal.classList.remove("is-open");
+        appModalsWindow.removeAttribute("data-note-id");
+    });
+
+    confirmNoteBtnDelete.addEventListener("click", async () => {
+        const noteId = appModalsWindow.dataset.noteId;
+        if (!noteId) return;
+
+        const accessToken = localStorage.getItem("access_token");
+        if (!accessToken) {
+            showToast("Access token not found");
+            return;
+        }
+
+        try {
+            const data = await deleteNoteRequest(accessToken, noteId);
+
+            if (data && data.success) {
+                showToast("Note deleted successfully", "success");
+                renderPinnedNotesWithTags();
+            } else {
+                showToast(data?.detail || "Failed to delete note");
+            }
+        } catch (error) {
+            showToast(`Error deleting note: ${error.message}`);
+        } finally {
+            appModalsWindow.classList.remove("is-open");
+            deleteModal.classList.remove("is-open");
+            appModalsWindow.removeAttribute("data-note-id");
+        }
+    });
+}
