@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="css/auth_style.css">
     <link rel="stylesheet" href="css/app_style.css">
     <link rel="stylesheet" href="css/modals_style.css">
+    <link rel="stylesheet" href="css/editor_style.css">
 </head>
 <body>
     <div class="toast-container" id="toast-container"></div>
@@ -520,31 +521,22 @@
                                         <title>Add tag</title>
                                         <path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14m-7-7v14"/>
                                     </svg>
-                                    Tag
+                                    Edit tags
                                 </button>
                             </span>
                         </div>
                     </div>
 
-                    <textarea class="editor-textarea"
-                        spellcheck="false"
-                        maxlength="500000"
-                        placeholder="Start typing here...">Dense interfaces feel powerful when density is earned.
-
-The mistake most apps make: they add information without adding *structure*. The result is clutter, not density.
-
-Telegram's message list is dense. Bloomberg Terminal is dense. What they share: every pixel serves a clear purpose.
-
-**Rules I'm working with:**
-- Never show more than 3 hierarchy levels simultaneously
-- Muted text should be muted by opacity, not by size
-- Hover states should reveal — never introduce new layout elements</textarea>
-                </div>
+                    <div class="editor-cm-host"></div>
+                    
+                    </div>
 
                 <footer class="editor-footer">
-                    <span class="editor-footer-stat">Created 20 May 2026</span>
-                    <span class="editor-footer-divider">•</span>
-                    <span class="editor-footer-stat">Updated yesterday</span>
+                    <span class="editor-footer-stat editor-created-at"></span>
+                    <span class="editor-footer-divider">-</span>
+                    <span class="editor-footer-stat editor-updated-at"></span>
+                    <span class="editor-footer-divider editor-save-divider">-</span>
+                    <span class="editor-save-status"></span>
                 </footer>
             </main>
         </div>
@@ -620,7 +612,7 @@ Telegram's message list is dense. Bloomberg Terminal is dense. What they share: 
 
                 <div class="note-tags-modal">
                     <div class="note-tags-title">
-                        <h1>Add Tags to Note</h1>
+                        <h1>Edit tags on note</h1>
                     </div>
                     
                     <div class="note-tags-list">

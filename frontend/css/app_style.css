@@ -750,7 +750,7 @@
 .editor-action-btn-danger:hover {
     background: rgba(224, 82, 82, 0.1);
     border-color: rgba(224, 82, 82, 0.3);
-    color: var(--app-tag-red);
+    color: rgb(224, 82, 82);
 }
 
 .editor-main-content {

@@ -1,6 +1,6 @@
 import { showToast } from "./ui.js";
 
-const API_URL = "http://127.0.0.1:8000/api";
+export const API_URL = "http://127.0.0.1:8000/api";
 
 
 export const checkUsernameRequest = async (username) => {
@@ -658,6 +658,75 @@ export const searchNotesRequest = async (token, searchQuery, limit = 50, cursor 
             return {
                 success: false,
                 detail: data.detail || "Failed to search notes"
+            };
+        }
+
+        return {
+            success: true,
+            ...data
+        };
+
+    } catch (error) {
+        showToast(error.message);
+
+        return {
+            success: false,
+            detail: "Network error"
+        };
+    }
+};
+
+
+export const getNoteRequest = async (token, noteId) => {
+    try {
+        const response = await fetch(`${API_URL}/notes/me/${noteId}`, {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${token}`
+            }
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            return {
+                success: false,
+                detail: data.detail || "Failed to fetch note"
+            };
+        }
+
+        return {
+            success: true,
+            ...data
+        };
+
+    } catch (error) {
+        showToast(error.message);
+
+        return {
+            success: false,
+            detail: "Network error"
+        };
+    }
+};
+
+export const finalizeNoteRequest = async (token, noteId, title, content) => {
+    try {
+        const response = await fetch(`${API_URL}/notes/${noteId}/finalize`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`
+            },
+            body: JSON.stringify({ title, content })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            return {
+                success: false,
+                detail: data.detail || "Failed to save note"
             };
         }
 

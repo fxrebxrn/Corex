@@ -1,0 +1,66 @@
+.editor-area {
+    position: relative;
+}
+
+.editor-cm-host {
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.editor-cm-host .cm-editor {
+    height: 100%;
+}
+
+.editor-action-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.editor-action-btn.is-active {
+    color: var(--app-accent, #4f8ef7);
+}
+
+.editor-note-title-input:disabled {
+    opacity: 0.4;
+    cursor: default;
+}
+
+.editor-save-status {
+    font-size: 11px;
+    color: var(--app-text-muted, #888);
+    transition: opacity 0.3s ease;
+}
+
+.editor-empty-state {
+    position: absolute;
+    inset: 0;
+    z-index: 20;
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    background: var(--app-bg-base, #000103);
+    color: var(--app-text-muted, #555);
+    pointer-events: none;
+    user-select: none;
+}
+
+.editor-empty-state.is-visible {
+    display: flex;
+}
+
+.editor-empty-state svg {
+    width: 40px;
+    height: 40px;
+    opacity: 0.5;
+}
+
+.editor-empty-state p {
+    font-size: 14px;
+    letter-spacing: 0.03em;
+}

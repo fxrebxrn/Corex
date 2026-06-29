@@ -4,6 +4,7 @@ import {
  } from "./api.js";
 import { showToast, closeModal, setActiveNoteCard, setCurrentNoteIdForMenu, formatTimeAgo } from "./ui.js";
 import { navigateTo } from "./router.js";
+import { openNote, clearEditorIfNote, rehighlightCurrentCard, buildPreview } from "./editor.js";
 
 const appModalsWindow = document.querySelector(".app-modals");
 const accountModal = document.querySelector(".account-modal"); 
@@ -122,7 +123,7 @@ export const createNoteElement = (note) => {
 
     const noteCardPrev = document.createElement("p");
     noteCardPrev.className = "note-card-preview";
-    noteCardPrev.textContent = note.pre_content || note.content || ""; 
+    noteCardPrev.textContent = buildPreview(note.content || note.pre_content || "");
 
     const noteCardTags = document.createElement("section");
     noteCardTags.className = "note-card-tags";
@@ -149,6 +150,7 @@ export const createNoteElement = (note) => {
 
     noteCard.addEventListener("click", () => {
         setActiveNoteCard(noteCard);
+        openNote(note.id);
     });
 
     noteCardOptionsBtn.addEventListener("click", (e) => {
@@ -297,6 +299,8 @@ export const renderRegularNotes = async (reset = false) => {
         });
 
         setupInfiniteScroll(regularContainer);
+
+        rehighlightCurrentCard();
 
     } catch (error) {
         showToast(`Error in renderRegularNotes: ${error.message}`);
@@ -596,6 +600,8 @@ if (confirmNoteBtnCancel && confirmNoteBtnDelete && deleteModal && appModalsWind
 
             if (data && data.success) {
                 showToast("Note deleted successfully", "success");
+
+                clearEditorIfNote(noteId);
                 
                 if (isSearchingMode) {
                     await renderSearchNotes(true);
@@ -636,11 +642,17 @@ createNoteBtn.addEventListener("click", async () => {
             
             await renderPinnedNotesWithTags();
             await renderRegularNotes(true);
+
+            if (data.id) {
+                const newCard = document.getElementById(`note-${data.id}`);
+                if (newCard) setActiveNoteCard(newCard);
+                openNote(data.id);
+            }
         } else {
-            showToast(data?.detail || "Failed to delete note");
+            showToast(data?.detail || "Failed to create note");
         }
     } catch (error) {
-        showToast(`Error deleting note: ${error.message}`);
+        showToast(`Error creating note: ${error.message}`);
     } 
 });
 
