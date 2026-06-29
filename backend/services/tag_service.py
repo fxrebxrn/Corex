@@ -6,6 +6,7 @@ from models.tag import Tag
 from fastapi import HTTPException
 from core.exceptions import TagNotFound, PermissionDeniedError
 from config.settings import settings
+from datetime import datetime, timezone
 
 
 class TagService:
@@ -41,6 +42,7 @@ class TagService:
         new_tag = Tag(
             name=tag.name,
             user_id=current_user.id,
+            updated_at = datetime.now(timezone.utc).replace(tzinfo=None)
         )
 
         self.db.add(new_tag)
@@ -62,6 +64,7 @@ class TagService:
             raise HTTPException(status_code=400, detail="Tag already exists")
 
         tag_to_update.name = tag.name
+        tag_to_update.updated_at = datetime.now(timezone.utc).replace(tzinfo=None)
 
         await self.db.flush()
         await self.db.refresh(tag_to_update)

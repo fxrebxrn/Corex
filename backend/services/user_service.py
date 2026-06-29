@@ -6,6 +6,7 @@ from schemas.user_schemas import UpdateUser
 from fastapi import HTTPException
 from core.security import DECLINED_NAMES
 from repositories.note_repository import NoteRepository
+from datetime import datetime, timezone
 
 
 class UserService:
@@ -57,6 +58,7 @@ class UserService:
 
         user_to_update.name = user.name
         user_to_update.username = user.username
+        user_to_update.updated_at = datetime.now(timezone.utc).replace(tzinfo=None)
 
         await self.db.flush()
         await self.db.refresh(user_to_update)

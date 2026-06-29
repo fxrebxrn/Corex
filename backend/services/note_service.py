@@ -5,7 +5,7 @@ from models.note import Note
 from models.tag import NoteTag
 from fastapi import HTTPException
 from core.exceptions import NoteNotFound, PermissionDeniedError
-from datetime import datetime
+from datetime import datetime, timezone
 from services.tag_service import TagService
 
 
@@ -44,7 +44,8 @@ class NoteService:
         new_note = Note(
             user_id=user_id,
             title=default_title,
-            content=""
+            content="",
+            updated_at=datetime.now(timezone.utc).replace(tzinfo=None)
         )
         
         self.db.add(new_note)
@@ -68,6 +69,7 @@ class NoteService:
             note.title = title
 
         note.content = content
+        note.updated_at = datetime.now(timezone.utc).replace(tzinfo=None)
 
         await self.db.flush()
         await self.db.refresh(note)
@@ -215,6 +217,7 @@ class NoteService:
             )
             
         note.tags = valid_tags
+        note.updated_at = datetime.now(timezone.utc).replace(tzinfo=None)
 
         await self.db.flush()
         await self.db.refresh(note)

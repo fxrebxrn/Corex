@@ -551,3 +551,80 @@ export const syncNoteTagsRequest = async (token, note_id, tag_ids) => {
         };
     }
 };
+
+export const getRegularNotesRequest = async (token, limit = 50, cursor = null) => {
+    try {
+        const url = new URL(`${API_URL}/notes/me`);
+        url.searchParams.append("limit", limit);
+        if (cursor) {
+            if (cursor.updated_at) {
+                url.searchParams.append("cursor_updated_at", cursor.updated_at);
+            }
+            if (cursor.id) {
+                url.searchParams.append("cursor_id", cursor.id);
+            }
+        }
+
+        const response = await fetch(url.toString(), {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${token}`
+            }
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            return {
+                success: false,
+                detail: data.detail || "Failed to fetch notes"
+            };
+        }
+
+        return {
+            success: true,
+            ...data
+        };
+
+    } catch (error) {
+        showToast(error.message);
+
+        return {
+            success: false,
+            detail: "Network error"
+        };
+    }
+};
+
+export const createNoteRequest = async (token) => {
+    try {
+        const response = await fetch(`${API_URL}/notes`, {
+            method: "POST",
+            headers: {
+                "Authorization": `Bearer ${token}`
+            }
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            return {
+                success: false,
+                detail: data.detail
+            };
+        };
+
+        return {
+            success: true,
+            ...data
+        };
+
+    } catch (error) {
+        showToast(error.message);
+
+        return {
+            success: false,
+            detail: "Network error"
+        };
+    }
+};
