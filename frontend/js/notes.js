@@ -1,6 +1,6 @@
 import { 
     getUserMeRequest, editUserProfileRequest, logoutRequest, getUserPinnedNotesRequest, deleteNoteRequest, 
-    syncNoteTagsRequest, getRegularNotesRequest, createNoteRequest
+    syncNoteTagsRequest, getRegularNotesRequest, createNoteRequest, searchNotesRequest
  } from "./api.js";
 import { showToast, closeModal, setActiveNoteCard, setCurrentNoteIdForMenu, formatTimeAgo } from "./ui.js";
 import { navigateTo } from "./router.js";
@@ -17,6 +17,7 @@ const confirmNoteBtnDelete = document.querySelector("#confirm-note-btn-delete");
 const myProfileBtn = document.querySelector("#nav-userInfo");
 const confirmTagsBtn = document.querySelector(".note-tags-submit");
 const createNoteBtn = document.querySelector("#button-create-note-bottom");
+const searchInput = document.querySelector(".search-input");
 
 let userName = null;
 let userUsername = null;
@@ -25,6 +26,15 @@ let currentCursor = null;
 let hasMoreNotes = true;
 let isFetchingNotes = false;
 let scrollObserver = null;
+
+let isSearchingMode = false;
+let currentSearchQuery = "";
+let searchDebounceTimeout = null;
+
+let currentSearchCursor = null;
+let hasMoreSearchNotes = true;
+let isFetchingSearchNotes = false;
+let searchScrollObserver = null;
 
 
 export const createNoteElement = (note) => {
@@ -241,7 +251,6 @@ export const renderRegularNotes = async (reset = false) => {
     const notesContainer = document.querySelector(".notes-container");
     if (!notesContainer) return;
 
-    // Ищем выделенный подконтейнер для обычных заметок
     let regularContainer = notesContainer.querySelector(".regular-notes-container");
     if (!regularContainer) {
         regularContainer = document.createElement("div");
@@ -322,7 +331,7 @@ const setupInfiniteScroll = (container) => {
 
     scrollObserver = new IntersectionObserver((entries) => {
         if (entries[0].isIntersecting && hasMoreNotes && !isFetchingNotes) {
-            renderRegularNotes(false); // Загружаем следующую страницу
+            renderRegularNotes(false);
         }
     }, {
         root: null,
@@ -333,6 +342,100 @@ const setupInfiniteScroll = (container) => {
     scrollObserver.observe(sentinel);
 };
 
+export const renderSearchNotes = async (reset = false) => {
+    const notesContainer = document.querySelector(".notes-container");
+    if (!notesContainer) return;
+
+    if (reset) {
+        currentSearchCursor = null;
+        hasMoreSearchNotes = true;
+
+        notesContainer.replaceChildren();
+        
+        if (searchScrollObserver) {
+            searchScrollObserver.disconnect();
+            searchScrollObserver = null;
+        }
+    }
+
+    if (!hasMoreSearchNotes || isFetchingSearchNotes) return;
+
+    isFetchingSearchNotes = true;
+    const accessToken = localStorage.getItem("access_token");
+
+    try {
+        const data = await searchNotesRequest(accessToken, currentSearchQuery, 50, currentSearchCursor);
+
+        if (!data || !data.success) {
+            showToast(data?.detail || "Search failed");
+            return;
+        }
+
+        const searchNotes = data.items || [];
+        currentSearchCursor = data.next_cursor;
+        hasMoreSearchNotes = data.has_more;
+
+        if (reset && searchNotes.length === 0) {
+            const noResults = document.createElement("div");
+            noResults.className = "no-search-results";
+            noResults.textContent = "No results found";
+            noResults.style.textAlign = "center";
+            noResults.style.marginTop = "2rem";
+            noResults.style.color = "var(--text-muted, #888)";
+            
+            notesContainer.appendChild(noResults);
+        } else {
+            searchNotes.forEach(note => {
+                const noteCard = createNoteElement(note);
+                notesContainer.appendChild(noteCard);
+            });
+
+            setupSearchInfiniteScroll(notesContainer);
+        }
+
+    } catch (error) {
+        showToast(`Error in search: ${error.message}`);
+    } finally {
+        isFetchingSearchNotes = false;
+    }
+};
+
+const setupSearchInfiniteScroll = (container) => {
+    if (!hasMoreSearchNotes) {
+        if (searchScrollObserver) {
+            searchScrollObserver.disconnect();
+            searchScrollObserver = null;
+        }
+        const oldSentinel = container.querySelector("#search-scroll-sentinel");
+        if (oldSentinel) oldSentinel.remove();
+        return;
+    }
+
+    let sentinel = container.querySelector("#search-scroll-sentinel");
+    if (!sentinel) {
+        sentinel = document.createElement("div");
+        sentinel.id = "search-scroll-sentinel";
+        sentinel.style.height = "1px";
+        sentinel.style.width = "100%";
+    }
+    container.appendChild(sentinel);
+
+    if (searchScrollObserver) {
+        searchScrollObserver.disconnect();
+    }
+
+    searchScrollObserver = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting && hasMoreSearchNotes && !isFetchingSearchNotes) {
+            renderSearchNotes(false); 
+        }
+    }, {
+        root: null,
+        rootMargin: "200px",
+        threshold: 0
+    });
+
+    searchScrollObserver.observe(sentinel);
+};
 
 const getFirstLetter = (name) => {
     try {
@@ -493,8 +596,13 @@ if (confirmNoteBtnCancel && confirmNoteBtnDelete && deleteModal && appModalsWind
 
             if (data && data.success) {
                 showToast("Note deleted successfully", "success");
-                await renderPinnedNotesWithTags();
-                await renderRegularNotes(true);
+                
+                if (isSearchingMode) {
+                    await renderSearchNotes(true);
+                } else {
+                    await renderPinnedNotesWithTags();
+                    await renderRegularNotes(true);
+                }
             } else {
                 showToast(data?.detail || "Failed to delete note");
             }
@@ -520,6 +628,12 @@ createNoteBtn.addEventListener("click", async () => {
 
         if (data && data.success) {
             showToast("Note created successfully", "success");
+            
+            if (isSearchingMode) {
+                isSearchingMode = false;
+                searchInput.value = "";
+            }
+            
             await renderPinnedNotesWithTags();
             await renderRegularNotes(true);
         } else {
@@ -529,3 +643,31 @@ createNoteBtn.addEventListener("click", async () => {
         showToast(`Error deleting note: ${error.message}`);
     } 
 });
+
+if (searchInput) {
+    searchInput.addEventListener("input", (e) => {
+        const query = e.target.value.trim();
+        clearTimeout(searchDebounceTimeout);
+
+        if (query.length >= 3) {
+            searchDebounceTimeout = setTimeout(() => {
+                isSearchingMode = true;
+                currentSearchQuery = query;
+                renderSearchNotes(true);
+            }, 1000);
+            
+        } else if (query.length === 0 && isSearchingMode) {
+            isSearchingMode = false;
+            currentSearchQuery = "";
+            
+            if (searchScrollObserver) {
+                searchScrollObserver.disconnect();
+                searchScrollObserver = null;
+            }
+            
+            renderPinnedNotesWithTags().then(() => {
+                renderRegularNotes(true);
+            });
+        }
+    });
+}

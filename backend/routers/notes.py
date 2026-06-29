@@ -46,7 +46,7 @@ async def get_archived_notes(current_user: Annotated[User, Depends(get_current_u
 async def search_my_notes(current_user: Annotated[User, Depends(get_current_user)], 
                           db: Annotated[AsyncSession, Depends(get_db)],
                           q: str = Query(..., min_length=3, alias="query"),
-                          limit: int = Query(20, ge=1, le=20),
+                          limit: int = Query(50, ge=1, le=50),
                           cursor_updated_at: datetime | None = None, 
                           cursor_id: int | None = None):
     service = NoteService(db)

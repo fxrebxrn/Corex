@@ -628,3 +628,50 @@ export const createNoteRequest = async (token) => {
         };
     }
 };
+
+export const searchNotesRequest = async (token, searchQuery, limit = 50, cursor = null) => {
+    try {
+        const url = new URL(`${API_URL}/notes/me/search`);
+        
+        url.searchParams.append("query", searchQuery); 
+        url.searchParams.append("limit", limit);
+        
+        if (cursor) {
+            if (cursor.updated_at) {
+                url.searchParams.append("cursor_updated_at", cursor.updated_at);
+            }
+            if (cursor.id) {
+                url.searchParams.append("cursor_id", cursor.id);
+            }
+        }
+
+        const response = await fetch(url.toString(), {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${token}`
+            }
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            return {
+                success: false,
+                detail: data.detail || "Failed to search notes"
+            };
+        }
+
+        return {
+            success: true,
+            ...data
+        };
+
+    } catch (error) {
+        showToast(error.message);
+
+        return {
+            success: false,
+            detail: "Network error"
+        };
+    }
+};
