@@ -1,4 +1,4 @@
-import { renderNavBarProfile, renderPinnedNotesWithTags, renderRegularNotes } from "./notes.js";
+import { renderNavBarProfile, renderPinnedNotesWithTags, renderRegularNotes, showAppSkeletons } from "./notes.js";
 import { tokenCheckRequest } from "./api.js";
 import { refreshToken } from "./storage.js";
 import { renderSidebarTags } from "./tags.js";
@@ -45,10 +45,6 @@ export const renderRoute = async () => {
             window.history.replaceState({}, "", "/app");
             path = "/app";
         }
-        renderNavBarProfile();
-        renderSidebarTags();
-        await renderPinnedNotesWithTags();
-        await renderRegularNotes(true);
     }
 
     document.querySelectorAll(".page").forEach((p) => p.classList.add("hidden"));
@@ -57,5 +53,13 @@ export const renderRoute = async () => {
         document.getElementById("page-auth").classList.remove("hidden");
     } else if (path === "/app") {
         document.getElementById("page-app").classList.remove("hidden");
+    }
+
+    if (isAuthenticated) {
+        showAppSkeletons();
+        renderNavBarProfile();
+        renderSidebarTags();
+        await renderPinnedNotesWithTags();
+        await renderRegularNotes(true);
     }
 };

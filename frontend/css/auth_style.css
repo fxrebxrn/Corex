@@ -49,7 +49,7 @@ button {
 
 :root {
     --auth-bg-base:        #000000;
-    --auth-bg-sidebar:     #111111;
+    --auth-bg-sidebar:     #0e0e0e;
     --auth-bg-panel:       #161616;
     --auth-bg-hover:       #1e1e1e;
     --auth-bg-active:      #222222;
@@ -209,7 +209,6 @@ body {
     height: 100%;
     padding: 40px;
     background: var(--auth-bg-sidebar);
-    border: 1px solid var(--auth-border);
     border-radius: 40px;
     box-sizing: border-box;
     backface-visibility: hidden;

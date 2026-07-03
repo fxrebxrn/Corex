@@ -1,5 +1,5 @@
 import { archiveNoteRequest, pinNoteRequest } from "./api.js";
-import { renderPinnedNotesWithTags, renderRegularNotes, renderNavBarProfile } from "./notes.js";
+import { refreshAllNotes } from "./notes.js";
 import { openAttachTagModal } from "./tags.js";
 
 const appModalsWindow = document.querySelector(".app-modals");
@@ -147,6 +147,24 @@ export const setCurrentNoteIdForMenu = (id) => {
     currentNoteIdForMenu = id;
 };
 
+export const updateOptionsMenuState = (noteId) => {
+    if (!optionsMenu || String(optionsMenu.dataset.currentId) !== String(noteId)) return;
+    const card = document.getElementById(`note-${noteId}`);
+    if (!card) return;
+
+    const isPinned = card.dataset.isPinned === "true";
+    const isArchived = card.dataset.isArchived === "true";
+
+    const pinTextSpan = optionsMenu.querySelector(".menu-item:nth-of-type(1) .menu-item-text");
+    if (pinTextSpan) pinTextSpan.textContent = isPinned ? "Unpin" : "Pin Note";
+
+    const archiveTextSpan = optionsMenu.querySelector(".menu-item:nth-of-type(2) .menu-item-text");
+    if (archiveTextSpan) archiveTextSpan.textContent = isArchived ? "Unarchive" : "Archive";
+
+    const tags = Array.from(card.querySelectorAll('.note-card-tags .note-tag')).map(t => ({ name: t.textContent }));
+    optionsMenu.dataset.currentTags = JSON.stringify(tags || []);
+};
+
 export const initOptionsMenu = () => {
     if (!optionsMenu) return;
 
@@ -162,39 +180,30 @@ export const initOptionsMenu = () => {
         item.addEventListener("click", async () => {
             const itemText = item.querySelector(".menu-item-text")?.textContent?.trim() || "";
 
-            if (itemText === "Pin Note" || itemText === "Pin") {
-                console.log("Pin Note clicked, ID:", currentNoteIdForMenu);
-                await pinNoteRequest(localStorage.getItem("access_token"), currentNoteIdForMenu);
-                await renderPinnedNotesWithTags();
-                await renderRegularNotes(true);
-            } else if (itemText === "Unpin") {
-                console.log("Unpin clicked, ID:", currentNoteIdForMenu);
-                await pinNoteRequest(localStorage.getItem("access_token"), currentNoteIdForMenu);
-                await renderPinnedNotesWithTags();
-                await renderRegularNotes(true);
-            } else if (itemText === "Archive") {
-                console.log("Archive clicked, ID:", currentNoteIdForMenu);
-                await archiveNoteRequest(localStorage.getItem("access_token"), currentNoteIdForMenu);
-                await renderPinnedNotesWithTags();
-                await renderRegularNotes(true);
-                await renderNavBarProfile();
-            } else if (itemText === "Unarchive") {
-                console.log("Unarchive clicked, ID:", currentNoteIdForMenu);
-                await archiveNoteRequest(localStorage.getItem("access_token"), currentNoteIdForMenu);
-                await renderPinnedNotesWithTags();
-                await renderRegularNotes(true);
-                await renderNavBarProfile();
+            if (itemText === "Pin Note" || itemText === "Pin" || itemText === "Unpin") {
+                const token = localStorage.getItem("access_token");
+                const resPin = await pinNoteRequest(token, currentNoteIdForMenu);
+                if (resPin && resPin.success) {
+                    await refreshAllNotes();
+                } else {
+                    showToast(resPin?.detail || "Failed to pin note");
+                }
+            } else if (itemText === "Archive" || itemText === "Unarchive") {
+                const token = localStorage.getItem("access_token");
+                const resArchive = await archiveNoteRequest(token, currentNoteIdForMenu);
+                if (resArchive && resArchive.success) {
+                    await refreshAllNotes();
+                } else {
+                    showToast(resArchive?.detail || "Failed to archive note");
+                }
             } else if (itemText === "Attach Tag") {
-                console.log("Attach Tag clicked, ID:", currentNoteIdForMenu);
                 const currentTagsRaw = optionsMenu.dataset.currentTags;
                 const currentTags = currentTagsRaw ? JSON.parse(currentTagsRaw) : [];
-
-                openAttachTagModal(currentNoteIdForMenu, currentTags, async () => {
-                    await renderPinnedNotesWithTags();
-                    await renderRegularNotes(true);
+                const noteIdForTagUpdate = currentNoteIdForMenu;
+                openAttachTagModal(noteIdForTagUpdate, currentTags, async () => {
+                    await refreshAllNotes();
                 });
             } else if (itemText === "Delete") {
-                console.log("Delete clicked, ID:", currentNoteIdForMenu);
                 
                 const appModals = document.querySelector(".app-modals");
                 const deleteModal = document.querySelector(".delete-note-modal");

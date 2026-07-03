@@ -721,6 +721,13 @@ export const finalizeNoteRequest = async (token, noteId, title, content) => {
             body: JSON.stringify({ title, content })
         });
 
+        if (response.status === 204) {
+            return {
+                success: true,
+                deleted: true
+            };
+        }
+
         const data = await response.json();
 
         if (!response.ok) {

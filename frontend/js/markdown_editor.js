@@ -21,7 +21,7 @@ const codeHighlightStyle = HighlightStyle.define([
     { tag: [t.tagName], color: "#f07178" },
     { tag: [t.comment, t.lineComment, t.blockComment], color: "#5c6370", fontStyle: "italic" },
     { tag: [t.operator, t.punctuation, t.separator, t.bracket], color: "#89ddff" },
-    { tag: [t.meta], color: "#82aaff" },
+    { tag: [t.meta], color: "#494949" },
     { tag: [t.invalid], color: "#ff5370" },
 ]);
 

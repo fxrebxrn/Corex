@@ -1,32 +1,32 @@
 :root {
-    --app-bg-base:        #000103;
-    --app-bg-sidebar:     #000103;
-    --app-bg-panel:       #080808;
-    --app-bg-hover:       #0e0e0e;
-    --app-bg-active:      #121212;
+    --app-bg-base: #000103;
+    --app-bg-sidebar: #000103;
+    --app-bg-panel: #080808;
+    --app-bg-hover: #0e0e0e;
+    --app-bg-active: #121212;
     --app-bg-card-active: #111111;
 
-    --app-border:         #242424;
-    --app-border-light:   #2a2a2a;
+    --app-border: #242424;
+    --app-border-light: #2a2a2a;
 
-    --app-text-primary:   #e8e8e8;
+    --app-text-primary: #e8e8e8;
     --app-text-secondary: #888888;
-    --app-text-muted:     #555555;
-    --app-text-label:     #444444;
+    --app-text-muted: #555555;
+    --app-text-label: #444444;
 
-    --app-accent:         #4f8ef7;
-    --app-accent-dim:     rgba(79, 142, 247, 0.15);
+    --app-accent: #4f8ef7;
+    --app-accent-dim: rgba(79, 142, 247, 0.15);
 
-    --app-tag-red:        #448eca;
+    --app-tag-red: #448eca;
 
-    --app-tag-red-bg:     rgba(55, 129, 172, 0.12);
+    --app-tag-red-bg: rgba(55, 129, 172, 0.12);
 
-    --app-nav-sidebar-w:  204px;
+    --app-nav-sidebar-w: 204px;
     --app-notes-sidebar-w: 270px;
 
-    --app-radius-sm:  4px;
-    --app-radius-md:  6px;
-    --app-radius-lg:  8px;
+    --app-radius-sm: 4px;
+    --app-radius-md: 6px;
+    --app-radius-lg: 8px;
 
     --app-font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     --app-font-mono: "SF Mono", "Fira Code", "Fira Mono", "Roboto Mono", monospace;
@@ -339,7 +339,7 @@
     padding: 8px;
     gap: 8px;
     width: 100%;
-    min-width: 0; 
+    min-width: 0;
     background: none;
     border: none;
     border-radius: var(--app-radius-md);
@@ -414,7 +414,7 @@
     position: relative;
 }
 
-.notes-sidebar-header, 
+.notes-sidebar-header,
 .notes-sidebar-footer {
     position: absolute;
     left: 0;
@@ -423,15 +423,16 @@
     z-index: 10;
 }
 
-.notes-sidebar-header { 
-    top: 0; 
+.notes-sidebar-header {
+    top: 0;
     padding: 10px;
-    background-image: linear-gradient(180deg, #000000 0%, transparent 50%); 
+    background-image: linear-gradient(180deg, #000000 0%, transparent 50%);
 }
-.notes-sidebar-footer { 
-    bottom: 0; 
+
+.notes-sidebar-footer {
+    bottom: 0;
     padding: 10px;
-    background-image: linear-gradient(0deg, #000000 0%, transparent 50%); 
+    background-image: linear-gradient(0deg, #000000 0%, transparent 50%);
 }
 
 .search-wrapper {
@@ -482,6 +483,14 @@
     padding: 55px 5px;
     scrollbar-width: none;
     -ms-overflow-style: none;
+    contain: layout paint;
+}
+
+.pinned-notes-container,
+.regular-notes-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
 }
 
 .notes-container::-webkit-scrollbar {
@@ -495,12 +504,54 @@
     border-radius: var(--app-radius-lg);
     padding: 10px 12px;
     cursor: pointer;
-    transition: background 0.1s;
+    transition: background 0.16s ease, transform 0.2s ease, opacity 0.2s ease, box-shadow 0.2s ease;
     position: relative;
+    will-change: transform, opacity;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.note-card.is-adding {
+    opacity: 0;
+    transform: translateY(6px);
+}
+
+.note-card.is-removing {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.98);
+    pointer-events: none;
+}
+
+@keyframes noteCardIntro {
+    0% {
+        opacity: 0;
+        transform: translateY(-10px) scale(0.96);
+        filter: blur(1px);
+    }
+    60% {
+        opacity: 1;
+        transform: translateY(1px) scale(1.008);
+        filter: blur(0);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        filter: blur(0);
+    }
+}
+
+.note-card.is-new {
+    animation: noteCardIntro 0.42s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.note-card.is-new-settle {
+    box-shadow: 0 0 0 1px var(--app-accent-dim), 0 0 18px -6px var(--app-accent);
+    transition: box-shadow 0.5s ease;
 }
 
 .note-card:hover {
     background: var(--app-bg-hover);
+    transform: translateY(-1px);
 }
 
 .note-card.note-card-active {
@@ -594,6 +645,12 @@
     opacity: 0.7;
 }
 
+.note-card-preview.is-fresh {
+    opacity: 1;
+    transform: translateY(-1px);
+    transition: transform 0.18s ease, opacity 0.18s ease;
+}
+
 .note-card-tags {
     display: flex;
     flex-wrap: wrap;
@@ -609,6 +666,12 @@
 .note-card-footer time {
     font-size: 10.5px;
     color: var(--app-text-muted);
+    transition: color 0.16s ease, transform 0.16s ease;
+}
+
+.note-card-footer time.is-updating {
+    color: var(--app-text-primary);
+    transform: translateY(-1px);
 }
 
 .notes-new-note-btn {
@@ -653,6 +716,11 @@
     cursor: default;
     background: var(--app-tag-red-bg);
     color: var(--app-tag-red);
+    transition: transform 0.16s ease, opacity 0.16s ease;
+}
+
+.note-tag:hover {
+    transform: translateY(-1px);
 }
 
 .tag {
@@ -740,6 +808,7 @@
     background: var(--app-bg-hover);
     border-color: var(--app-border-light);
     color: var(--app-text-primary);
+    transform: translateY(-1px);
 }
 
 .editor-action-btn svg {
@@ -838,4 +907,31 @@
 .editor-footer-divider {
     font-size: 11px;
     color: var(--app-text-label);
+}
+
+.no-tags-title {
+    font-size: 11px;
+    font-weight: 500;
+    text-align: center;
+    color: var(--app-text-muted);
+    padding: 10px;
+}
+
+.empty-notes-message {
+    font-size: 13px;
+    color: var(--app-text-muted);
+    padding: 24px 24px;
+    text-align: center;
+    animation: fadeInUp 0.2s ease both;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }

@@ -1,5 +1,6 @@
-import { getUserTagsRequest, deleteTagRequest, createTagRequest, syncNoteTagsRequest } from "./api.js";
+import { getUserTagsRequest, deleteTagRequest, createTagRequest, syncNoteTagsRequest, getNoteRequest } from "./api.js";
 import { showToast, closeModal } from "./ui.js";
+import { applyNoteMutation } from "./notes.js";
 
 const appModalsWindow = document.querySelector(".app-modals");
 const deleteTagModal = document.querySelector(".delete-tag-modal");
@@ -22,13 +23,18 @@ createTagForm.addEventListener("submit", async (e) => {
     e.preventDefault();
 
     const accessToken = localStorage.getItem("access_token");
-    
+
     if (!accessToken) {
         showToast("Access token not found");
         return;
     };
 
     const createTagNameInput = document.querySelector("#tag-name-input");
+
+    if (!createTagNameInput.value) {
+        showToast("Tag name is required");
+        return;
+    };
 
     const data = await createTagRequest(accessToken, createTagNameInput.value);
 
@@ -46,13 +52,13 @@ createTagBtnCancel.addEventListener("click", () => {
     closeModal(createTagModal);
 });
 
-confirmBtnCancel.addEventListener("click", () => {closeModal(deleteTagModal)});
+confirmBtnCancel.addEventListener("click", () => { closeModal(deleteTagModal) });
 
 confirmBtnDelete.addEventListener("click", async () => {
     if (!tagToDeleteId) return;
 
     const accessToken = localStorage.getItem("access_token");
-    
+
     if (!accessToken) {
         showToast("Access token not found");
         return;
@@ -73,11 +79,11 @@ confirmBtnDelete.addEventListener("click", async () => {
 export const renderSidebarTags = async () => {
     try {
         const tagsList = document.querySelector(".nav-tags-list");
-        
+
         if (!tagsList) return;
 
         const accessToken = localStorage.getItem("access_token");
-        
+
         if (!accessToken) {
             showToast("Access token not found in storage");
             return;
@@ -94,58 +100,70 @@ export const renderSidebarTags = async () => {
 
         tags.sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
 
-        tagsList.replaceChildren();
+        tagsList.querySelectorAll(".nav-tag-item").forEach((item) => item.classList.add("is-removing"));
+        window.setTimeout(() => {
+            tagsList.replaceChildren();
 
-        tags.forEach(tag => {
-            const liItem = document.createElement("li");
-            liItem.className = "nav-tag-item";
+            if (tags.length === 0) {
+                const noTags = document.createElement("h2");
+                noTags.className = "no-tags-title";
+                noTags.textContent = "No tags";
+                tagsList.appendChild(noTags);
+                return;
+            }
 
-            const aLink = document.createElement("a");
-            aLink.href = "#";
-            aLink.className = "nav-tag-link";
-            aLink.dataset.tag = tag.name.toLowerCase(); 
+            tags.forEach(tag => {
+                const liItem = document.createElement("li");
+                liItem.className = "nav-tag-item";
 
-            const spanDot = document.createElement("span");
-            spanDot.className = "nav-tag-dot";
+                const aLink = document.createElement("a");
+                aLink.href = "#";
+                aLink.className = "nav-tag-link";
+                aLink.dataset.tag = tag.name.toLowerCase();
 
-            const spanName = document.createElement("span");
-            spanName.className = "nav-tag-name";
-            spanName.textContent = tag.name; 
+                const spanDot = document.createElement("span");
+                spanDot.className = "nav-tag-dot";
 
-            const removeBtn = document.createElement("button");
-            removeBtn.className = "nav-tag-remove-btn";
-            removeBtn.title = "Remove filter";
-            
-            removeBtn.addEventListener("click", (e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                tagToDeleteId = tag.id;
-                appModalsWindow.classList.add("is-open");
-                deleteTagModal.classList.add("is-open");
+                const spanName = document.createElement("span");
+                spanName.className = "nav-tag-name";
+                spanName.textContent = tag.name;
+
+                const removeBtn = document.createElement("button");
+                removeBtn.className = "nav-tag-remove-btn";
+                removeBtn.title = "Remove filter";
+
+                removeBtn.addEventListener("click", (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    tagToDeleteId = tag.id;
+                    appModalsWindow.classList.add("is-open");
+                    deleteTagModal.classList.add("is-open");
+                });
+
+                const svgNS = "http://www.w3.org/2000/svg";
+                const svgIcon = document.createElementNS(svgNS, "svg");
+                svgIcon.setAttribute("width", "1em");
+                svgIcon.setAttribute("height", "1em");
+                svgIcon.setAttribute("viewBox", "0 0 24 24");
+
+                const pathInfo = document.createElementNS(svgNS, "path");
+                pathInfo.setAttribute("fill", "none");
+                pathInfo.setAttribute("stroke", "currentColor");
+                pathInfo.setAttribute("stroke-linecap", "round");
+                pathInfo.setAttribute("stroke-linejoin", "round");
+                pathInfo.setAttribute("stroke-width", "2");
+                pathInfo.setAttribute("d", "M18 6 6 18M6 6l12 12");
+
+                svgIcon.appendChild(pathInfo);
+                removeBtn.appendChild(svgIcon);
+
+                aLink.append(spanDot, spanName, removeBtn);
+                liItem.appendChild(aLink);
+
+                tagsList.appendChild(liItem);
             });
-        
-            const svgNS = "http://www.w3.org/2000/svg";
-            const svgIcon = document.createElementNS(svgNS, "svg");
-            svgIcon.setAttribute("width", "1em");
-            svgIcon.setAttribute("height", "1em");
-            svgIcon.setAttribute("viewBox", "0 0 24 24");
+        }, 120);
 
-            const pathInfo = document.createElementNS(svgNS, "path");
-            pathInfo.setAttribute("fill", "none");
-            pathInfo.setAttribute("stroke", "currentColor");
-            pathInfo.setAttribute("stroke-linecap", "round");
-            pathInfo.setAttribute("stroke-linejoin", "round");
-            pathInfo.setAttribute("stroke-width", "2");
-            pathInfo.setAttribute("d", "M18 6 6 18M6 6l12 12");
-
-            svgIcon.appendChild(pathInfo);
-            removeBtn.appendChild(svgIcon);
-
-            aLink.append(spanDot, spanName, removeBtn);
-            liItem.appendChild(aLink);
-            
-            tagsList.appendChild(liItem);
-        });
 
     } catch (error) {
         showToast("Could not load tags information");
@@ -177,12 +195,15 @@ export const openAttachTagModal = async (noteId, currentTags, onSuccess) => {
     }
 
     const allTags = data.tags || [];
-    const currentTagIds = currentTags.map(t => t.id);
+    let effectiveCurrentTags = Array.isArray(currentTags) ? currentTags : [];
+    const noteForTags = await getNoteRequest(accessToken, noteId);
+    if (noteForTags && noteForTags.success && Array.isArray(noteForTags.tags)) {
+        effectiveCurrentTags = noteForTags.tags;
+    }
+    const currentTagIds = effectiveCurrentTags.map(t => t.id);
 
     tagsListContainer.replaceChildren();
     tagsListContainer.innerHTML = "";
-
-    const colors = ["is-red", "is-blue", "is-green", "is-purple"];
 
     allTags.forEach((tag, index) => {
         const label = document.createElement("label");
@@ -207,13 +228,13 @@ export const openAttachTagModal = async (noteId, currentTags, onSuccess) => {
         const svgNS = "http://www.w3.org/2000/svg";
         const svg = document.createElementNS(svgNS, "svg");
         svg.setAttribute("viewBox", "0 0 12 12");
-        
+
         const path = document.createElementNS(svgNS, "path");
         path.setAttribute("d", "M2 6.5L4.5 9L10 3");
         path.setAttribute("stroke-width", "2");
         path.setAttribute("stroke-linecap", "round");
         path.setAttribute("stroke-linejoin", "round");
-        
+
         svg.appendChild(path);
         boxSpan.appendChild(svg);
 
@@ -234,9 +255,15 @@ export const openAttachTagModal = async (noteId, currentTags, onSuccess) => {
             const response = await syncNoteTagsRequest(accessToken, noteId, selectedTagIds);
 
             if (response && response.success) {
+                const noteResp = await getNoteRequest(accessToken, noteId);
+                let updatedNote = null;
+                if (noteResp && noteResp.success) {
+                    updatedNote = noteResp;
+                    applyNoteMutation(noteResp, {});
+                }
                 showToast("Tags updated successfully", "success");
                 closeModal(noteTagsModal);
-                if (onSuccess) onSuccess();
+                if (onSuccess) onSuccess(updatedNote);
             } else {
                 showToast(response?.detail || "Failed to update tags");
             }

@@ -5,8 +5,8 @@ import {
     archiveNoteRequest,
     API_URL
 } from "./api.js";
-import { showToast, setActiveNoteCard, formatTimeAgo } from "./ui.js";
-import { renderPinnedNotesWithTags, renderRegularNotes, renderNavBarProfile } from "./notes.js";
+import { showToast, setActiveNoteCard, formatTimeAgo, updateOptionsMenuState } from "./ui.js";
+import { renderNavBarProfile, removeNoteCard, checkEmptyState, refreshAllNotes } from "./notes.js";
 import { openAttachTagModal } from "./tags.js";
 import { createMarkdownEditor } from "./markdown_editor.js";
 
@@ -50,9 +50,9 @@ export const initEditor = () => {
 
     titleInput.addEventListener("input", () => scheduleSave());
 
-    if (pinBtn)     pinBtn.addEventListener("click", handlePin);
+    if (pinBtn) pinBtn.addEventListener("click", handlePin);
     if (archiveBtn) archiveBtn.addEventListener("click", handleArchive);
-    if (deleteBtn)  deleteBtn.addEventListener("click", handleDelete);
+    if (deleteBtn) deleteBtn.addEventListener("click", handleDelete);
 
     const moreTagsBtn = document.querySelector(".more-tags-btn");
     if (moreTagsBtn) moreTagsBtn.addEventListener("click", handleAddTag);
@@ -145,7 +145,13 @@ const saveCurrentNote = async () => {
     try {
         const data = await finalizeNoteRequest(accessToken, currentNoteId, title, content);
 
-        if (data && data.success) {
+        if (data && data.success && data.deleted) {
+            const deletedId = currentNoteId;
+            removeNoteCard(deletedId);
+            setEditorEmpty();
+            try { await renderNavBarProfile(); } catch (e) {}
+            checkEmptyState();
+        } else if (data && data.success) {
             const updatedAt = data.updated_at || new Date().toISOString();
             if (currentNoteData) currentNoteData.updated_at = updatedAt;
             showSaveStatus("saved");
@@ -224,7 +230,7 @@ const showSaveStatus = (status) => {
 
     switch (status) {
         case "editing": show("Editing..."); break;
-        case "saving":  show("Saving..."); break;
+        case "saving": show("Saving..."); break;
         case "saved":
             show("Saved ✓");
             setTimeout(() => {
@@ -252,13 +258,19 @@ const updateNoteCardInSidebar = (noteId, title, content, updatedAt) => {
     if (pEl) pEl.textContent = title || "Untitled";
 
     const previewEl = card.querySelector(".note-card-preview");
-    if (previewEl) previewEl.textContent = buildPreview(content);
+    if (previewEl) {
+        previewEl.textContent = buildPreview(content);
+        previewEl.classList.remove("is-fresh");
+        requestAnimationFrame(() => previewEl.classList.add("is-fresh"));
+    }
 
     const timeEl = card.querySelector("time");
     if (timeEl) {
         const stamp = updatedAt || new Date().toISOString();
         timeEl.setAttribute("datetime", stamp);
         timeEl.textContent = formatTimeAgo(stamp);
+        timeEl.classList.remove("is-updating");
+        requestAnimationFrame(() => timeEl.classList.add("is-updating"));
     }
 
     if (!currentNoteData?.is_pinned) {
@@ -364,7 +376,7 @@ const showEmptyState = () => { if (emptyStateEl) emptyStateEl.classList.add("is-
 const hideEmptyState = () => { if (emptyStateEl) emptyStateEl.classList.remove("is-visible"); };
 
 
-const setEditorEmpty = () => {
+export const setEditorEmpty = () => {
     if (saveTimeout) {
         clearTimeout(saveTimeout);
         saveTimeout = null;
@@ -407,13 +419,8 @@ const handlePin = async () => {
     try {
         const data = await pinNoteRequest(accessToken, currentNoteId);
         if (data && data.success) {
-            const wasPinned = currentNoteData?.is_pinned;
-            showToast(wasPinned ? "Note unpinned" : "Note pinned", "success");
-            if (currentNoteData) currentNoteData.is_pinned = !wasPinned;
-            updateActionButtons(currentNoteData);
-            await renderPinnedNotesWithTags();
-            await renderRegularNotes(true);
-            rehighlightCurrentCard();
+            await refreshAllNotes();
+            showToast(currentNoteData?.is_pinned ? "Note pinned" : "Note unpinned", "success");
         } else {
             showToast(data?.detail || "Failed to pin note");
         }
@@ -432,14 +439,8 @@ const handleArchive = async () => {
     try {
         const data = await archiveNoteRequest(accessToken, currentNoteId);
         if (data && data.success) {
-            const wasArchived = currentNoteData?.is_archived;
-            showToast(wasArchived ? "Note unarchived" : "Note archived", "success");
-            if (currentNoteData) currentNoteData.is_archived = !wasArchived;
-            updateActionButtons(currentNoteData);
-            await renderPinnedNotesWithTags();
-            await renderRegularNotes(true);
-            await renderNavBarProfile();
-            rehighlightCurrentCard();
+            await refreshAllNotes();
+            showToast(currentNoteData?.is_archived ? "Note archived" : "Note unarchived", "success");
         } else {
             showToast(data?.detail || "Failed to archive note");
         }
@@ -463,15 +464,12 @@ const handleDelete = () => {
 const handleAddTag = () => {
     if (!currentNoteId || !currentNoteData) return;
 
-    openAttachTagModal(currentNoteId, currentNoteData.tags || [], async () => {
-        const accessToken = localStorage.getItem("access_token");
-        const data = await getNoteRequest(accessToken, currentNoteId);
-        if (data && data.success) {
-            currentNoteData = data;
-            renderEditorTags(data.tags || []);
+    openAttachTagModal(currentNoteId, currentNoteData.tags || [], (updatedNote) => {
+        if (updatedNote) {
+            currentNoteData = updatedNote;
+            renderEditorTags(updatedNote.tags || []);
+            updateOptionsMenuState(updatedNote.id);
         }
-        await renderPinnedNotesWithTags();
-        await renderRegularNotes(true);
         rehighlightCurrentCard();
     });
 };
