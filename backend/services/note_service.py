@@ -225,3 +225,35 @@ class NoteService:
         return {
             "detail": "Successfully synced note tags"
             }
+    
+    async def get_my_notes_by_tag(self, user_id: int, tag_id: int,
+                        limit: int, 
+                        cursor_updated_at: datetime | None = None, 
+                        cursor_id: int | None = None):
+        if (cursor_updated_at is None) != (cursor_id is None):
+            raise HTTPException(
+                status_code=400,
+                detail="cursor_updated_at and cursor_id must be provided together"
+            )
+
+        await self.tag_service.get_by_id_my(tag_id, user_id)
+
+        notes_desc = await self.repo.get_my_notes_by_tag(tag_id, limit, cursor_updated_at, cursor_id)
+        
+        has_more = len(notes_desc) > limit
+        items = notes_desc[:limit]
+        
+        next_cursor = None
+        if has_more and items:
+            oldest_item = items[-1]
+            next_cursor = {
+                "updated_at": oldest_item.updated_at,
+                "id": oldest_item.id
+            }
+
+        return {
+            "items": items,
+            "limit": limit,
+            "next_cursor": next_cursor,
+            "has_more": has_more
+        }

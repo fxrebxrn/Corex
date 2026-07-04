@@ -1,6 +1,6 @@
 import { getUserTagsRequest, deleteTagRequest, createTagRequest, syncNoteTagsRequest, getNoteRequest } from "./api.js";
 import { showToast, closeModal } from "./ui.js";
-import { applyNoteMutation } from "./notes.js";
+import { applyNoteMutation, handleTagSelection, resetToAllNotes, getCurrentTagId } from "./notes.js";
 
 const appModalsWindow = document.querySelector(".app-modals");
 const deleteTagModal = document.querySelector(".delete-tag-modal");
@@ -73,6 +73,7 @@ confirmBtnDelete.addEventListener("click", async () => {
 
     closeModal(deleteTagModal);
     renderSidebarTags();
+    await resetToAllNotes();
     showToast("Tag deleted successfully", "success");
 });
 
@@ -153,6 +154,13 @@ export const renderSidebarTags = async () => {
                 pathInfo.setAttribute("stroke-linejoin", "round");
                 pathInfo.setAttribute("stroke-width", "2");
                 pathInfo.setAttribute("d", "M18 6 6 18M6 6l12 12");
+
+                liItem.addEventListener("click", async (e) => {
+                    e.preventDefault();
+                    document.querySelectorAll(".nav-tag-item").forEach(t => t.classList.remove("nav-item-active"));
+                    liItem.classList.add("nav-item-active");
+                    await handleTagSelection(tag.id);
+                });
 
                 svgIcon.appendChild(pathInfo);
                 removeBtn.appendChild(svgIcon);

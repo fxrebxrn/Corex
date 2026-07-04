@@ -1,5 +1,5 @@
 import {
-    getUserMeRequest, editUserProfileRequest, logoutRequest, getUserPinnedNotesRequest, deleteNoteRequest,
+    getUserMeRequest, editUserProfileRequest, logoutRequest, getUserPinnedNotesRequest, deleteNoteRequest, getTagNotesRequest,
     syncNoteTagsRequest, getRegularNotesRequest, createNoteRequest, searchNotesRequest, getNoteRequest, getArchivedNotesRequest
 } from "./api.js";
 import { showToast, closeModal, setActiveNoteCard, setCurrentNoteIdForMenu, formatTimeAgo } from "./ui.js";
@@ -20,6 +20,7 @@ const myProfileBtn = document.querySelector("#nav-userInfo");
 const confirmTagsBtn = document.querySelector(".note-tags-submit");
 const createNoteBtn = document.querySelector("#button-create-note-bottom");
 const searchInput = document.querySelector(".search-input");
+const navItems = document.querySelectorAll(".nav-sections .nav-item");
 
 let userName = null;
 let userUsername = null;
@@ -41,6 +42,7 @@ let searchScrollObserver = null;
 let hasPinnedNotes = false;
 let hasNotes = false;
 let currentViewMode = "all";
+let currentTagId = null;
 
 const getNotesShell = () => document.querySelector(".notes-container");
 
@@ -216,7 +218,10 @@ export const applyNoteMutation = (noteLike, options = {}) => {
 
     const card = document.getElementById(`note-${noteId}`);
     const targetContainer = getTargetListContainer(note);
-    const shouldRemove = options.remove || (note.is_archived && currentViewMode === "all") || (!note.is_archived && currentViewMode === "archived");
+    const shouldRemove = options.remove || 
+                         (note.is_archived && currentViewMode === "all") || 
+                         (!note.is_archived && currentViewMode === "archived") ||
+                         (currentViewMode === "tag" && (!note.tags || !note.tags.some(t => t.id === currentTagId)));
 
     if (shouldRemove) {
         if (card) {
@@ -586,9 +591,15 @@ export const renderRegularNotes = async (reset = false) => {
         return;
     }
 
-    try {
-        const fetchFn = currentViewMode === "archived" ? getArchivedNotesRequest/*(access_token, 50, current_cursor)*/ : getRegularNotesRequest/*(access_token, 50, current_cursor)*/;
-        const data = await fetchFn(accessToken, 50, currentCursor);
+   try {
+        let data;
+        if (currentViewMode === "archived") {
+            data = await getArchivedNotesRequest(accessToken, 50, currentCursor);
+        } else if (currentViewMode === "tag") {
+            data = await getTagNotesRequest(accessToken, currentTagId, 50, currentCursor);
+        } else {
+            data = await getRegularNotesRequest(accessToken, 50, currentCursor);
+        }
 
         if (!data || !data.success) {
             showToast(data?.detail || "Failed to fetch regular notes");
@@ -1114,7 +1125,28 @@ export const showAppSkeletons = () => {
     }
 };
 
-const navItems = document.querySelectorAll(".nav-sections .nav-item");
+export const handleTagSelection = async (tagId) => {
+    const navItems = document.querySelectorAll(".nav-sections .nav-item");
+    if (navItems) navItems.forEach(nav => nav.classList.remove("nav-item-active"));
+
+    currentViewMode = "tag";
+    currentTagId = tagId;
+    await refreshAllNotes({ closeEditor: true });
+};
+
+export const resetToAllNotes = async () => {
+    currentViewMode = "all";
+    currentTagId = null;
+    const allNotesBtn = document.querySelector('.nav-item[data-filter="all"]');
+    if (allNotesBtn) {
+        document.querySelectorAll(".nav-sections .nav-item").forEach(nav => nav.classList.remove("nav-item-active"));
+        allNotesBtn.classList.add("nav-item-active");
+    }
+    await refreshAllNotes({ closeEditor: true });
+};
+
+export const getCurrentTagId = () => currentTagId;
+
 if (navItems) {
     navItems.forEach(item => {
         item.addEventListener("click", async (e) => {
@@ -1123,8 +1155,10 @@ if (navItems) {
             if (!filter) return;
 
             navItems.forEach(nav => nav.classList.remove("nav-item-active"));
+            document.querySelectorAll(".nav-tag-item").forEach(t => t.classList.remove("nav-item-active"));
             item.classList.add("nav-item-active");
 
+            currentTagId = null;
             if (currentViewMode !== filter) {
                 currentViewMode = filter;
                 await refreshAllNotes({ closeEditor: true });

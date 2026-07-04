@@ -28,6 +28,16 @@ async def get_my_notes(current_user: Annotated[User, Depends(get_current_user)],
     service = NoteService(db)
     return await service.get_my_notes(current_user.id, limit, cursor_updated_at, cursor_id)
 
+@router.get("/me/tag/{tag_id}", response_model=PaginatedNotesResponse)
+async def get_my_notes(current_user: Annotated[User, Depends(get_current_user)],
+                                tag_id: int,
+                                db: Annotated[AsyncSession, Depends(get_db)], 
+                                limit: int = Query(50, ge=1, le=50),
+                                cursor_updated_at: datetime | None = None, 
+                                cursor_id: int | None = None):
+    service = NoteService(db)
+    return await service.get_my_notes_by_tag(current_user.id, tag_id, limit, cursor_updated_at, cursor_id)
+
 @router.get("/me/pinned", response_model=list[NoteShortResponse])
 async def get_pinned_notes(current_user: Annotated[User, Depends(get_current_user)], db: Annotated[AsyncSession, Depends(get_db)]):
     service = NoteService(db)

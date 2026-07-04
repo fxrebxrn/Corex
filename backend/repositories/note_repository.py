@@ -115,3 +115,29 @@ class NoteRepository:
         stmt = select(Tag).where(Tag.id.in_(tag_ids), Tag.user_id == user_id)
         result = await self.db.execute(stmt)
         return list(result.scalars().all())
+    
+    async def get_my_notes_by_tag(self, tag_id: int, limit: int, 
+                        cursor_updated_at: datetime | None = None, 
+                        cursor_id: int | None = None):
+
+        stmt = (
+            select(Note)
+            .join(NoteTag, Note.id == NoteTag.note_id)
+            .where(NoteTag.tag_id == tag_id)
+            .options(selectinload(Note.tags), selectinload(Note.user))
+            .order_by(Note.updated_at.desc(), Note.id.desc())
+            .limit(limit + 1)
+        )
+        
+        if cursor_updated_at is not None and cursor_id is not None:
+            stmt = stmt.where(
+                or_(
+                    Note.updated_at < cursor_updated_at,
+                    and_(
+                        Note.updated_at == cursor_updated_at,
+                        Note.id < cursor_id
+                    )
+                )
+            )
+
+        return await fetch_all_by_stmt(self.db, stmt)
