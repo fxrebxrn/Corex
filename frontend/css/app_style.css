@@ -670,7 +670,7 @@
 }
 
 .note-card-footer time.is-updating {
-    color: var(--app-text-primary);
+    color: #afafaf;
     transform: translateY(-1px);
 }
 

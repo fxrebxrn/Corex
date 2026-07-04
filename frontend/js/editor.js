@@ -270,7 +270,12 @@ const updateNoteCardInSidebar = (noteId, title, content, updatedAt) => {
         timeEl.setAttribute("datetime", stamp);
         timeEl.textContent = formatTimeAgo(stamp);
         timeEl.classList.remove("is-updating");
-        requestAnimationFrame(() => timeEl.classList.add("is-updating"));
+        requestAnimationFrame(() => {
+            timeEl.classList.add("is-updating");
+            setTimeout(() => {
+                timeEl.classList.remove("is-updating");
+            }, 1000);
+        });
     }
 
     if (!currentNoteData?.is_pinned) {

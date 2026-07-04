@@ -1,6 +1,6 @@
 import {
     getUserMeRequest, editUserProfileRequest, logoutRequest, getUserPinnedNotesRequest, deleteNoteRequest,
-    syncNoteTagsRequest, getRegularNotesRequest, createNoteRequest, searchNotesRequest, getNoteRequest
+    syncNoteTagsRequest, getRegularNotesRequest, createNoteRequest, searchNotesRequest, getNoteRequest, getArchivedNotesRequest
 } from "./api.js";
 import { showToast, closeModal, setActiveNoteCard, setCurrentNoteIdForMenu, formatTimeAgo } from "./ui.js";
 import { navigateTo } from "./router.js";
@@ -40,6 +40,7 @@ let searchScrollObserver = null;
 
 let hasPinnedNotes = false;
 let hasNotes = false;
+let currentViewMode = "all";
 
 const getNotesShell = () => document.querySelector(".notes-container");
 
@@ -215,8 +216,9 @@ export const applyNoteMutation = (noteLike, options = {}) => {
 
     const card = document.getElementById(`note-${noteId}`);
     const targetContainer = getTargetListContainer(note);
+    const shouldRemove = options.remove || (note.is_archived && currentViewMode === "all") || (!note.is_archived && currentViewMode === "archived");
 
-    if (options.remove || note.is_archived) {
+    if (shouldRemove) {
         if (card) {
             animateCardRemoval(card);
         }
@@ -488,7 +490,15 @@ export const refreshAllNotes = async (options = {}) => {
 
     try { await renderNavBarProfile(); } catch (e) {}
     try { await renderSidebarTags(); } catch (e) {}
-    await renderPinnedNotesWithTags();
+    
+    if (currentViewMode === "all") {
+        await renderPinnedNotesWithTags();
+    } else {
+        const { pinnedContainer } = ensureNotesLayout();
+        if (pinnedContainer) pinnedContainer.replaceChildren();
+        hasPinnedNotes = false;
+    }
+    
     await renderRegularNotes(true);
 
     if (closeEditor) {
@@ -577,7 +587,8 @@ export const renderRegularNotes = async (reset = false) => {
     }
 
     try {
-        const data = await getRegularNotesRequest(accessToken, 50, currentCursor);
+        const fetchFn = currentViewMode === "archived" ? getArchivedNotesRequest/*(access_token, 50, current_cursor)*/ : getRegularNotesRequest/*(access_token, 50, current_cursor)*/;
+        const data = await fetchFn(accessToken, 50, currentCursor);
 
         if (!data || !data.success) {
             showToast(data?.detail || "Failed to fetch regular notes");
@@ -1102,3 +1113,22 @@ export const showAppSkeletons = () => {
         `;
     }
 };
+
+const navItems = document.querySelectorAll(".nav-sections .nav-item");
+if (navItems) {
+    navItems.forEach(item => {
+        item.addEventListener("click", async (e) => {
+            e.preventDefault();
+            const filter = item.dataset.filter;
+            if (!filter) return;
+
+            navItems.forEach(nav => nav.classList.remove("nav-item-active"));
+            item.classList.add("nav-item-active");
+
+            if (currentViewMode !== filter) {
+                currentViewMode = filter;
+                await refreshAllNotes({ closeEditor: true });
+            }
+        });
+    });
+}
