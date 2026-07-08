@@ -116,6 +116,7 @@ export const renderSidebarTags = async () => {
             tags.forEach(tag => {
                 const liItem = document.createElement("li");
                 liItem.className = "nav-tag-item";
+                liItem.classList.toggle("nav-tag-item-active", Number(getCurrentTagId()) === tag.id);
 
                 const aLink = document.createElement("a");
                 aLink.href = "#";
@@ -157,8 +158,15 @@ export const renderSidebarTags = async () => {
 
                 liItem.addEventListener("click", async (e) => {
                     e.preventDefault();
-                    document.querySelectorAll(".nav-tag-item").forEach(t => t.classList.remove("nav-item-active"));
-                    liItem.classList.add("nav-item-active");
+
+                    if (Number(getCurrentTagId()) === tag.id) {
+                        document.querySelectorAll(".nav-tag-item").forEach(t => t.classList.remove("nav-tag-item-active"));
+                        await resetToAllNotes();
+                        return;
+                    }
+
+                    document.querySelectorAll(".nav-tag-item").forEach(t => t.classList.remove("nav-tag-item-active"));
+                    liItem.classList.add("nav-tag-item-active");
                     await handleTagSelection(tag.id);
                 });
 

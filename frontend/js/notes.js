@@ -1140,6 +1140,7 @@ export const resetToAllNotes = async () => {
     const allNotesBtn = document.querySelector('.nav-item[data-filter="all"]');
     if (allNotesBtn) {
         document.querySelectorAll(".nav-sections .nav-item").forEach(nav => nav.classList.remove("nav-item-active"));
+        document.querySelectorAll(".nav-tag-item").forEach(t => t.classList.remove("nav-tag-item-active"));
         allNotesBtn.classList.add("nav-item-active");
     }
     await refreshAllNotes({ closeEditor: true });
@@ -1155,7 +1156,7 @@ if (navItems) {
             if (!filter) return;
 
             navItems.forEach(nav => nav.classList.remove("nav-item-active"));
-            document.querySelectorAll(".nav-tag-item").forEach(t => t.classList.remove("nav-item-active"));
+            document.querySelectorAll(".nav-tag-item").forEach(t => t.classList.remove("nav-tag-item-active"));
             item.classList.add("nav-item-active");
 
             currentTagId = null;

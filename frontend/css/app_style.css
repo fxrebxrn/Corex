@@ -320,6 +320,15 @@
     color: var(--app-text-primary);
 }
 
+.nav-tag-item-active .nav-tag-link {
+    background: var(--app-bg-active);
+    color: var(--app-text-primary);
+}
+
+.nav-tag-item-active .nav-tag-dot {
+    box-shadow: 0 0 0 2px rgba(79, 142, 247, 0.18);
+}
+
 .nav-sidebar-footer {
     display: flex;
     align-items: center;
