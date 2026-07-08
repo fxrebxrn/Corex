@@ -77,13 +77,11 @@ export const openNote = async (noteId) => {
 
         const accessToken = localStorage.getItem("access_token");
         if (!accessToken) {
-            showToast("Access token not found");
             return;
         }
 
         const data = await getNoteRequest(accessToken, noteId);
         if (!data || !data.success) {
-            showToast(data?.detail || "Failed to load note");
             return;
         }
 
@@ -103,8 +101,7 @@ export const openNote = async (noteId) => {
         showSaveStatus("idle");
         hideEmptyState();
 
-    } catch (error) {
-        showToast(`Error opening note: ${error.message}`);
+    } catch {
     } finally {
         isLoadingNote = false;
     }
@@ -158,11 +155,11 @@ const saveCurrentNote = async () => {
             updateUpdatedAtFooter(updatedAt);
             updateNoteCardInSidebar(currentNoteId, title, content, updatedAt);
         } else {
-            showToast(data?.detail || "Failed to save note");
+            showToast("Unable to save note right now", "warning");
             showSaveStatus("error");
         }
-    } catch (error) {
-        showToast(`Error saving: ${error.message}`);
+    } catch {
+        showToast("Unable to save note right now", "warning");
         showSaveStatus("error");
     } finally {
         isSaving = false;
@@ -425,12 +422,11 @@ const handlePin = async () => {
         const data = await pinNoteRequest(accessToken, currentNoteId);
         if (data && data.success) {
             await refreshAllNotes();
-            showToast(currentNoteData?.is_pinned ? "Note pinned" : "Note unpinned", "success");
         } else {
-            showToast(data?.detail || "Failed to pin note");
+            showToast("Unable to update note right now", "warning");
         }
-    } catch (error) {
-        showToast(`Error: ${error.message}`);
+    } catch {
+        showToast("Unable to update note right now", "warning");
     }
 };
 
@@ -445,12 +441,11 @@ const handleArchive = async () => {
         const data = await archiveNoteRequest(accessToken, currentNoteId);
         if (data && data.success) {
             await refreshAllNotes();
-            showToast(currentNoteData?.is_archived ? "Note archived" : "Note unarchived", "success");
         } else {
-            showToast(data?.detail || "Failed to archive note");
+            showToast("Unable to update note right now", "warning");
         }
-    } catch (error) {
-        showToast(`Error: ${error.message}`);
+    } catch {
+        showToast("Unable to update note right now", "warning");
     }
 };
 

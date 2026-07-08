@@ -744,15 +744,30 @@
 }
 
 .resizer {
-    width: 4px;
-    min-width: 4px;
+    width: 6px;
+    min-width: 6px;
     background: transparent;
     cursor: ew-resize;
+    transition: background 0.15s, box-shadow 0.15s;
+    position: relative;
+    flex-shrink: 0;
+}
+
+.resizer::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: transparent;
     transition: background 0.15s;
 }
 
-.resizer:hover {
-    background: var(--app-border-light);
+.resizer:hover::before,
+.resizer.is-active::before {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.resizer.is-active {
+    background: rgba(255, 255, 255, 0.06);
 }
 
 .editor-area {

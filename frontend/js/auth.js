@@ -62,7 +62,7 @@ const login = async () => {
     const data = await loginRequest(username, password);
 
     if (!data.success) {
-        showToast(data.detail);
+        showToast(data.detail || "Unable to sign in right now", "warning");
         loginUsernameInput.classList.add("input-error");
         loginPasswordInput.classList.add("input-error");
         return;
@@ -143,7 +143,7 @@ const register = async () => {
             });
         }
 
-        showToast(errorMessages.join(" | "));
+        showToast(errorMessages.join(" | ") || "Unable to create account right now", "warning");
         return;
     }
 

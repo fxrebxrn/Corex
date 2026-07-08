@@ -268,7 +268,6 @@ export const fetchAndApplyNote = async (noteId, options = {}) => {
 
     const data = await getNoteRequest(accessToken, noteId);
     if (!data || !data.success) {
-        showToast(data?.detail || "Failed to refresh note");
         return null;
     }
 
@@ -559,7 +558,7 @@ export const renderPinnedNotesWithTags = async () => {
         });
 
     } catch (error) {
-        showToast(`Error in renderPinnedNotesWithTags: ${error.message}`);
+        showToast("Unable to load notes right now", "warning");
     }
 };
 
@@ -631,7 +630,7 @@ export const renderRegularNotes = async (reset = false) => {
         checkEmptyState();
 
     } catch (error) {
-        showToast(`Error in renderRegularNotes: ${error.message}`);
+        showToast("Unable to load notes right now", "warning");
     } finally {
         isFetchingNotes = false;
     }
@@ -736,7 +735,7 @@ export const renderSearchNotes = async (reset = false) => {
         }
 
     } catch (error) {
-        showToast(`Error in search: ${error.message}`);
+        showToast("Search failed", "warning");
     } finally {
         isFetchingSearchNotes = false;
     }
@@ -860,7 +859,7 @@ export const renderNavBarProfile = async () => {
         }
 
     } catch (error) {
-        showToast("Could not load profile information");
+        showToast("Unable to load profile right now", "warning");
     }
 };
 
@@ -893,10 +892,10 @@ accountFrom.addEventListener("submit", async (e) => {
         }
 
         closeModal(accountModal);
-        showToast("Profile updated successfully", "success");
+        showToast("Profile updated", "success");
         renderNavBarProfile();
     } catch (error) {
-        showToast(`Failed to update profile: ${error.message}`);
+        showToast("Unable to update profile right now", "warning");
     }
 });
 
@@ -906,7 +905,7 @@ accountModalLogout.addEventListener("click", async () => {
             const data = await logoutRequest(localStorage.getItem("access_token"), localStorage.getItem("refresh_token"));
 
             if (!data || !data.success) {
-                showToast(data?.detail || "Failed to logout");
+                showToast("Unable to logout right now", "warning");
             };
 
             localStorage.removeItem("access_token");
@@ -924,7 +923,7 @@ accountModalLogout.addEventListener("click", async () => {
             navigateTo("/auth");
         };
     } catch (error) {
-        showToast(`Failed to logout: ${error.message}`);
+        showToast("Unable to logout right now", "warning");
     };
 });
 
@@ -949,15 +948,15 @@ if (confirmNoteBtnCancel && confirmNoteBtnDelete && deleteModal && appModalsWind
             const data = await deleteNoteRequest(accessToken, noteId);
 
                 if (data && data.success) {
-                showToast("Note deleted successfully", "success");
+                showToast("Note deleted", "success");
 
                 const wasOpen = String(getCurrentNoteId()) === String(noteId);
                 await refreshAllNotes({ closeEditor: wasOpen });
             } else {
-                showToast(data?.detail || "Failed to delete note");
+                showToast("Unable to delete note right now", "warning");
             }
         } catch (error) {
-            showToast(`Error deleting note: ${error.message}`);
+            showToast("Unable to delete note right now", "warning");
         } finally {
             appModalsWindow.classList.remove("is-open");
             deleteModal.classList.remove("is-open");
@@ -977,7 +976,7 @@ createNoteBtn.addEventListener("click", async () => {
         const data = await createNoteRequest(accessToken);
 
             if (data && data.success) {
-            showToast("Note created successfully", "success");
+            showToast("New note created", "success");
 
             const listResp = await getRegularNotesRequest(accessToken, 1);
             const newNote = listResp && listResp.success && Array.isArray(listResp.items)
@@ -986,10 +985,10 @@ createNoteBtn.addEventListener("click", async () => {
 
             await refreshAllNotes({ openNoteId: newNote?.id || null });
         } else {
-            showToast(data?.detail || "Failed to create note");
+            showToast("Unable to create note right now", "warning");
         }
     } catch (error) {
-        showToast(`Error creating note: ${error.message}`);
+        showToast("Unable to create note right now", "warning");
     }
 });
 

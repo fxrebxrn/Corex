@@ -25,21 +25,18 @@ createTagForm.addEventListener("submit", async (e) => {
     const accessToken = localStorage.getItem("access_token");
 
     if (!accessToken) {
-        showToast("Access token not found");
         return;
     };
 
     const createTagNameInput = document.querySelector("#tag-name-input");
 
     if (!createTagNameInput.value) {
-        showToast("Tag name is required");
         return;
     };
 
     const data = await createTagRequest(accessToken, createTagNameInput.value);
 
     if (!data || !data.success) {
-        showToast(data?.detail || "Failed to create tag");
         return;
     };
 
@@ -67,7 +64,6 @@ confirmBtnDelete.addEventListener("click", async () => {
     const data = await deleteTagRequest(tagToDeleteId, accessToken);
 
     if (!data || !data.success) {
-        showToast(data?.detail || "Failed to delete tag");
         return;
     }
 
@@ -86,14 +82,12 @@ export const renderSidebarTags = async () => {
         const accessToken = localStorage.getItem("access_token");
 
         if (!accessToken) {
-            showToast("Access token not found in storage");
             return;
         }
 
         const data = await getUserTagsRequest(accessToken);
 
         if (!data || !data.success) {
-            showToast(data?.detail || "Failed to fetch user tags");
             return;
         }
 
@@ -181,8 +175,7 @@ export const renderSidebarTags = async () => {
         }, 120);
 
 
-    } catch (error) {
-        showToast("Could not load tags information");
+    } catch {
     }
 };
 
@@ -200,13 +193,11 @@ export const openAttachTagModal = async (noteId, currentTags, onSuccess) => {
 
     const accessToken = localStorage.getItem("access_token");
     if (!accessToken) {
-        showToast("Access token not found");
         return;
     }
 
     const data = await getUserTagsRequest(accessToken);
     if (!data || !data.success) {
-        showToast(data?.detail || "Failed to load tags");
         return;
     }
 
@@ -281,10 +272,10 @@ export const openAttachTagModal = async (noteId, currentTags, onSuccess) => {
                 closeModal(noteTagsModal);
                 if (onSuccess) onSuccess(updatedNote);
             } else {
-                showToast(response?.detail || "Failed to update tags");
+                showToast("Unable to update tags right now", "warning");
             }
-        } catch (error) {
-            showToast("Failed to update tags");
+        } catch {
+            showToast("Unable to update tags right now", "warning");
         } finally {
             submitBtn.disabled = false;
         }
