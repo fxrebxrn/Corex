@@ -10,10 +10,195 @@
     <link rel="stylesheet" href="css/loading_style.css">
     <link rel="stylesheet" href="css/modals_style.css">
     <link rel="stylesheet" href="css/editor_style.css">
+    <link rel="stylesheet" href="css/landing_style.css">
 </head>
 
 <body>
     <div class="toast-container" id="toast-container"></div>
+
+    <div id="page-landing" class="page hidden">
+        <div class="landing-page">
+            <header class="lp-header">
+                <div class="lp-header-brand">
+                    <svg class="lp-header-brand-logo" xmlns="http://www.w3.org/2000/svg" version="1.1" width="128px" height="128px"
+                        viewBox="0 0 128 128"
+                        style="shape-rendering:geometricPrecision; text-rendering:geometricPrecision; image-rendering:optimizeQuality; fill-rule:evenodd; clip-rule:evenodd"
+                        xmlns:xlink="http://www.w3.org/1999/xlink">
+                        <g>
+                            <path style="opacity:1" fill="#f9faf9"
+                                d="M 31.5,-0.5 C 49.5,-0.5 67.5,-0.5 85.5,-0.5C 94.5675,7.73954 102.401,17.0729 109,27.5C 109.948,41.9021 109.615,56.2354 108,70.5C 104.77,78.0628 99.27,83.2295 91.5,86C 81.883,87.1927 72.2164,87.8594 62.5,88C 48.0069,92.1683 42.8402,101.335 47,115.5C 52.8333,110.333 58.6667,105.167 64.5,100C 73.5,99.6667 82.5,99.3333 91.5,99C 95.7811,96.6087 98.7811,93.1087 100.5,88.5C 103.472,86.6944 106.305,84.6944 109,82.5C 110.684,96.969 104.517,106.136 90.5,110C 82.8333,110.333 75.1667,110.667 67.5,111C 60.7209,116.046 54.3876,121.546 48.5,127.5C 47.5,127.5 46.5,127.5 45.5,127.5C 40.4773,122.121 37.144,115.787 35.5,108.5C 26.2047,106.371 20.3714,100.704 18,91.5C 17.3333,66.1667 17.3333,40.8333 18,15.5C 19.9497,7.88841 24.4497,2.55507 31.5,-0.5 Z M 34.5,9.5 C 50.1702,9.33341 65.8369,9.50008 81.5,10C 82.1412,15.164 82.9746,20.3306 84,25.5C 87.8673,29.6848 92.7006,31.6848 98.5,31.5C 99.6656,41.4834 99.8322,51.4834 99,61.5C 97.6744,68.8229 93.5077,73.6562 86.5,76C 78.5,76.3333 70.5,76.6667 62.5,77C 50.0421,78.9702 41.7088,85.8036 37.5,97.5C 32.2631,96.7649 29.0965,93.7649 28,88.5C 27.3333,65.1667 27.3333,41.8333 28,18.5C 28.8727,14.4754 31.0393,11.4754 34.5,9.5 Z" />
+                        </g>
+                        <g>
+                            <path style="opacity:1" fill="#f9faf9"
+                                d="M 40.5,34.5 C 53.5043,34.3334 66.5043,34.5001 79.5,35C 83.5,37.6667 83.5,40.3333 79.5,43C 66.5,43.6667 53.5,43.6667 40.5,43C 37.8987,40.1705 37.8987,37.3371 40.5,34.5 Z" />
+                        </g>
+                        <g>
+                            <path style="opacity:1" fill="#f9faf9"
+                                d="M 41.5,52.5 C 54.1711,52.3334 66.8377,52.5001 79.5,53C 82.7366,55.4187 83.07,58.0854 80.5,61C 67.1667,61.6667 53.8333,61.6667 40.5,61C 37.6655,57.6955 37.9988,54.8621 41.5,52.5 Z" />
+                        </g>
+                    </svg>
+                    <p class="lp-header-brand-title">Corex</p>
+                </div>
+                <div class="lp-header-nav">
+                    <button class="lp-header-nav-button" id="lp-nav-btn-features">
+                        Features
+                    </button>
+                    <button class="lp-header-nav-button" id="lp-nav-btn-editor">
+                        Editor
+                    </button>
+                    <button class="lp-header-nav-button" id="lp-nav-btn-betatest">
+                        Beta-testing
+                    </button>
+                </div>
+                <div class="lp-header-start">
+                    <button class="lp-header-start-button" id="lp-start-btn">
+                        Get started
+                    </button>
+                </div>
+            </header>
+            <main class="lp-main">
+                <section class="lp-main-head">
+                    <div class="lp-main-betatest">
+                        <p class="lp-main-betatest-dot"> • </p>
+                        <p class="lp-main-betatest-title">Now available in beta</p>
+                    </div>
+                    <div class="lp-main-head-title">
+                        <p class="lp-main-head-title-row">Thoughts</p>
+                        <p class="lp-main-head-title-row">deserve</p>
+                        <p class="lp-main-head-title-row">a <span class="lp-main-title-head-clear">clear</span> form.</p>
+                    </div>
+                    <div class="lp-main-sub-title">
+                        <p class="lp-main-sub-title-row">Cloud-based and open source notes with a pleasant editor, smart tags, and instant synchronization. No distractions - just text.</p>
+                    </div>
+                    <div class="lp-main-start-btns">
+                        <button class="lp-main-head-start-btn" id="lp-main-head-start-btn">
+                            Start here
+                        </button>
+                        <a class="lp-main-head-source-btn" href="https://github.com/fxrebxrn/Corex" target="_blank" rel="noopener noreferrer">
+                            Show source
+                        </a>
+                    </div>
+                </section>
+                <section class="lp-main-features" id="lp-main-features">
+                    <p class="lp-main-section-title">Features</p>
+                    <p class="lp-main-section-subtitle">Everything you need, nothing more.</p>
+                    <p class="lp-main-section-desc">Corex is designed as a tool for serious text work-without compromise.</p>
+                    <div class="lp-main-features">
+                        <article class="lp-main-feature">
+                            <div class="lp-main-feature-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><title xmlns="">sync-rounded</title><path fill="currentColor" d="M6 12.05q0 1.125.425 2.188T7.75 16.2l.25.25V15q0-.425.288-.712T9 14t.713.288T10 15v4q0 .425-.288.713T9 20H5q-.425 0-.712-.288T4 19t.288-.712T5 18h1.75l-.4-.35q-1.3-1.15-1.825-2.625T4 12.05Q4 9.7 5.2 7.787T8.425 4.85q.35-.2.738-.025t.512.575q.125.375-.012.75t-.488.575q-1.45.8-2.312 2.213T6 12.05m12-.1q0-1.125-.425-2.187T16.25 7.8L16 7.55V9q0 .425-.288.713T15 10t-.712-.288T14 9V5q0-.425.288-.712T15 4h4q.425 0 .713.288T20 5t-.288.713T19 6h-1.75l.4.35q1.225 1.225 1.788 2.663T20 11.95q0 2.35-1.2 4.263t-3.225 2.937q-.35.2-.737.025t-.513-.575q-.125-.375.013-.75t.487-.575q1.45-.8 2.313-2.212T18 11.95"/></svg>
+                            </div>
+                            <div class="lp-main-feature-text">
+                                <p class="lp-main-feature-text-title">Cloud sync</p>
+                                <p class="lp-main-feature-text-content">Instant synchronization across all devices. Your data is always with you-no need to save it to external storage.</p>
+                            </div>
+                            <div class="lp-main-feature-proof">
+                                <span class="lp-main-feature-proof-main">50ms</span>
+                                <p class="lp-main-feature-proof-sub">synchronization delay.</p>
+                            </div>
+                        </article>
+                        <article class="lp-main-feature">
+                            <div class="lp-main-feature-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><title xmlns="">tag-filled</title><path fill="currentColor" d="M11.172 2a3 3 0 0 1 2.121.879l7.71 7.71a3.41 3.41 0 0 1 0 4.822l-5.592 5.592a3.41 3.41 0 0 1-4.822 0l-7.71-7.71A3 3 0 0 1 2 11.172V6a4 4 0 0 1 4-4zM7.5 5.5a2 2 0 0 0-1.995 1.85L5.5 7.5a2 2 0 1 0 2-2"/></svg>    
+                            </div>
+                            <div class="lp-main-feature-text">
+                                <p class="lp-main-feature-text-title">Smart tags</p>
+                                <p class="lp-main-feature-text-content">Organize your notes using nested tags. Simple, intuitive, and featuring instant filtering.</p>
+                            </div>
+                            <div class="lp-main-feature-proof">
+                                <span class="lp-main-feature-proof-main">100</span>
+                                <p class="lp-main-feature-proof-sub">tags available per user.</p>
+                            </div>
+                        </article>
+                        <article class="lp-main-feature">
+                            <div class="lp-main-feature-icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24"><title xmlns="">baseline-edit</title><path fill="currentColor" d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75zM20.71 7.04a.996.996 0 0 0 0-1.41l-2.34-2.34a.996.996 0 0 0-1.41 0l-1.83 1.83l3.75 3.75z"/></svg>    
+                            </div>
+                            <div class="lp-main-feature-text">
+                                <p class="lp-main-feature-text-title">Markdown editor</p>
+                                <p class="lp-main-feature-text-content">A full-featured editor with a preview, support for tables, headings, code highlighting, and other formatting options.</p>
+                            </div>
+                            <div class="lp-main-feature-proof">
+                                <span class="lp-main-feature-proof-main">500K</span>
+                                <p class="lp-main-feature-proof-sub">max characters in note.</p>
+                            </div>
+                        </article>
+                    </div>
+                </section>
+                <section class="lp-main-editor" id="lp-main-editor">
+                    <p class="lp-main-section-title">Editor</p>
+                    <p class="lp-main-section-subtitle">Uncompromising Markdown</p>
+                    <p class="lp-main-section-desc">Write using familiar syntax-the editor renders the result in real time.</p>
+                    <div class="lp-main-editor-container">
+                        <div class="lp-main-editor-header">
+                            <div class="lp-main-editor-dots">
+                                <div class="lp-main-editor-dot-red"></div>
+                                <div class="lp-main-editor-dot-ylw"></div>
+                                <div class="lp-main-editor-dot-green"></div>
+                            </div>
+                            <div class="lp-main-editor-searchbar">
+                                <p class="lp-main-editor-searchbar-title">corex</p>
+                            </div>
+                        </div>
+                        <div class="lp-main-editor-content">
+                            <div class="lp-main-editor-sidebar">
+                                <div class="lp-main-editor-sidebar-note active">
+                                    <p class="lp-main-editor-sidebar-note-title active">Service architecture</p>
+                                    <div class="lp-main-editor-note-tags">
+                                        <span class="lp-main-editor-note-tag">Work</span>
+                                        <span class="lp-main-editor-note-tag">Service</span>
+                                    </div>
+                                </div>
+                                <div class="lp-main-editor-sidebar-note">
+                                    <p class="lp-main-editor-sidebar-note-title">My secrets</p>
+                                    <div class="lp-main-editor-note-tags">
+                                        <span class="lp-main-editor-note-tag">Super-secret</span>
+                                    </div>
+                                </div>
+                                <div class="lp-main-editor-sidebar-note">
+                                    <p class="lp-main-editor-sidebar-note-title">Goals of 2028</p>
+                                    <div class="lp-main-editor-note-tags">
+                                        <span class="lp-main-editor-note-tag">Work</span>
+                                        <span class="lp-main-editor-note-tag">Personal</span>
+                                        <span class="lp-main-editor-note-tag">Dreams</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="lp-main-editor-text">
+                                <p class="lp-main-editor-text-title">Service architecture</p>
+                                <div class="lp-main-editor-text-content">
+                                    <p class="lp-main-editor-text-row header">System showcase</p>
+                                    <p class="lp-main-editor-text-row">System architecture doesn't have to be very complicated. It should look like this:</p>
+                                    <p class="lp-main-editor-text-row code"><span class="lp-code-console">console</span><span class="lp-code-white">.</span><span class="lp-code-log">log</span><span class="lp-code-bkt">(</span><span class="lp-code-text">"UI loaded"</span><span class="lp-code-bkt">)</span><span class="lp-code-white">;</span></p>
+                                    <p class="lp-main-editor-text-row">but at the same time perform the necessary functions precisely and quickly.</p>
+                                    <p class="lp-main-editor-text-row header">System responsibilities</p>
+                                    <p class="lp-main-editor-text-row"> • Simplicity;</p>
+                                    <p class="lp-main-editor-text-row"> • Speed;</p>
+                                    <p class="lp-main-editor-text-row"> • Security;</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <section class="lp-main-start" id="lp-main-start">
+                    <div class="lp-main-start-container">
+                        <p class="lp-main-start-title">Ready to start?</p>
+                        <p class="lp-main-start-subtitle">Your thoughts deserve a better tool.</p>
+                        <p class="lp-main-start-desc">Join us and see for yourself: comfort is simple.</p>
+                        <button class="lp-main-start-btn" id="lp-main-start-btn">
+                            Start here
+                        </button>
+                        <a class="lp-main-start-source" href="https://github.com/fxrebxrn/Corex" target="_blank" rel="noopener noreferrer">
+                            Show source
+                        </a>
+                    </div>
+                </section>
+            </main>
+            <footer class="lp-footer">
+                <p class="lp-footer-text">© 2026 Corex. All rights reserved.</p>
+            </footer>
+        </div>
+    </div>
 
     <div id="page-auth" class="page hidden">
 
@@ -553,53 +738,6 @@
                     </div>
 
                     <div class="note-tags-list">
-                        <label class="tag-select-item">
-                            <input type="checkbox" name="note-tag" value="design" checked>
-                            <span class="tag-select-dot is-red"></span>
-                            <span class="tag-select-name">Design</span>
-                            <span class="tag-select-box">
-                                <svg viewBox="0 0 12 12">
-                                    <path d="M2 6.5L4.5 9L10 3" stroke-width="2" stroke-linecap="round"
-                                        stroke-linejoin="round" />
-                                </svg>
-                            </span>
-                        </label>
-
-                        <label class="tag-select-item">
-                            <input type="checkbox" name="note-tag" value="development">
-                            <span class="tag-select-dot is-blue"></span>
-                            <span class="tag-select-name">Development</span>
-                            <span class="tag-select-box">
-                                <svg viewBox="0 0 12 12">
-                                    <path d="M2 6.5L4.5 9L10 3" stroke-width="2" stroke-linecap="round"
-                                        stroke-linejoin="round" />
-                                </svg>
-                            </span>
-                        </label>
-
-                        <label class="tag-select-item">
-                            <input type="checkbox" name="note-tag" value="personal" checked>
-                            <span class="tag-select-dot is-green"></span>
-                            <span class="tag-select-name">Personal</span>
-                            <span class="tag-select-box">
-                                <svg viewBox="0 0 12 12">
-                                    <path d="M2 6.5L4.5 9L10 3" stroke-width="2" stroke-linecap="round"
-                                        stroke-linejoin="round" />
-                                </svg>
-                            </span>
-                        </label>
-
-                        <label class="tag-select-item">
-                            <input type="checkbox" name="note-tag" value="important">
-                            <span class="tag-select-dot is-purple"></span>
-                            <span class="tag-select-name">Important</span>
-                            <span class="tag-select-box">
-                                <svg viewBox="0 0 12 12">
-                                    <path d="M2 6.5L4.5 9L10 3" stroke-width="2" stroke-linecap="round"
-                                        stroke-linejoin="round" />
-                                </svg>
-                            </span>
-                        </label>
                     </div>
 
                     <div class="note-tags-actions">

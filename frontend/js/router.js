@@ -36,9 +36,9 @@ export const renderRoute = async () => {
         localStorage.removeItem("refresh_token");
         localStorage.removeItem("user_id");
 
-        if (path !== "/auth") {
-            window.history.replaceState({}, "", "/auth");
-            path = "/auth";
+        if (path !== "/auth" && path !== "/") {
+            window.history.replaceState({}, "", "/");
+            path = "/";
         }
     } else {
         if (path !== "/app") {
@@ -49,7 +49,9 @@ export const renderRoute = async () => {
 
     document.querySelectorAll(".page").forEach((p) => p.classList.add("hidden"));
 
-    if (path === "/auth") {
+    if (path === "/") {
+        document.getElementById("page-landing").classList.remove("hidden");
+    } else if (path === "/auth") {
         document.getElementById("page-auth").classList.remove("hidden");
     } else if (path === "/app") {
         document.getElementById("page-app").classList.remove("hidden");
