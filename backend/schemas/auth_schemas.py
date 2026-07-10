@@ -1,24 +1,29 @@
-from pydantic import BaseModel, Field, field_validator, ConfigDict
+from pydantic import BaseModel, Field, field_validator, ConfigDict, EmailStr
 from schemas.user_schemas import UserShortResponse
 from core.security import DECLINED_NAMES
 
 
 class UserBase(BaseModel):
     name: str = Field(min_length=1, max_length=50)
-    email: str = Field(min_length=5)
+    email: EmailStr
 
     @field_validator("name")
-    def name_validator(cls, v):
-        if not v.strip():
+    @classmethod
+    def name_validator(cls, value: str) -> str:
+        value = value.strip()
+
+        if not value:
             raise ValueError("Invalid name")
-        if v.strip().lower() in DECLINED_NAMES:
+
+        if value.lower() in DECLINED_NAMES:
             raise ValueError("Invalid name")
-        return v.strip()
+
+        return value
+    
     @field_validator("email")
-    def email_validator(cls, v):
-        if "@" not in v or "." not in v:
-            raise ValueError("Invalid email")
-        return v
+    @classmethod
+    def normalize_email(cls, value: EmailStr) -> str:
+        return value.strip().lower()
 
 class UserUpdate(UserBase):
     pass
