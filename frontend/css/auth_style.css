@@ -456,3 +456,58 @@ body {
     border-color: var(--auth-accent-dim);
     cursor: not-allowed;
 }
+
+.password-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.password-container input {
+    padding-right: 40px !important; 
+}
+
+.toggle-password-btn {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--auth-text-secondary, #888888);
+    transition: opacity 0.2s ease, transform 0.1s ease;
+    user-select: none;
+}
+
+.toggle-password-btn:hover {
+    opacity: 0.8;
+}
+
+.toggle-password-btn:active {
+    transform: translateY(-50%) scale(0.9);
+}
+
+.toggle-password-btn svg {
+    width: 20px;
+    height: 20px;
+    display: block;
+    transition: color 0.2s ease;
+}
+
+.toggle-password-btn .icon-hide {
+    display: none;
+}
+
+.toggle-password-btn.visible .icon-show {
+    display: none;
+}
+
+.toggle-password-btn.visible .icon-hide {
+    display: block;
+}

@@ -21,6 +21,23 @@ const checkBoxNo = document.querySelector(".check-box-no");
 let debounceTimeout = null;
 
 
+const initPasswordToggle = (inputId, buttonId) => {
+    const passwordInput = document.querySelector(inputId);
+    const toggleButton = document.querySelector(buttonId);
+
+    if (!passwordInput || !toggleButton) return;
+
+    toggleButton.addEventListener("click", () => {
+        const isPassword = passwordInput.getAttribute("type") === "password";
+        
+        passwordInput.setAttribute("type", isPassword ? "text" : "password");
+        
+        toggleButton.classList.toggle("visible", isPassword);
+
+        toggleButton.setAttribute("aria-label", isPassword ? "Скрыть пароль" : "Показать пароль");
+    });
+};
+
 const checkRegisterUsername = async (username) => {
     if (!username) return;
 
@@ -43,6 +60,15 @@ const clearErrorOnInput = (inputElement) => {
     inputElement.addEventListener("input", () => {
         inputElement.classList.remove("input-error");
     }, { once: true });
+};
+
+const clearInputsBeforeSuccess = () => {
+    loginUsernameInput.value = "";
+    loginPasswordInput.value = "";
+    registerNameInput.value = "";
+    registerEmailInput.value = "";
+    registerUsernameInput.value = "";
+    registerPasswordInput.value = "";
 };
 
 const login = async () => {
@@ -70,6 +96,7 @@ const login = async () => {
 
     saveTokens(data.access_token, data.refresh_token);
     navigateTo("/app");
+    clearInputsBeforeSuccess();
 };
 
 const register = async () => {
@@ -149,6 +176,7 @@ const register = async () => {
 
     saveTokens(data.access_token, data.refresh_token);
     navigateTo("/app");
+    clearInputsBeforeSuccess();
 };
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -166,6 +194,9 @@ document.addEventListener("DOMContentLoaded", () => {
         authCard.classList.remove("flipped");
         authWindow.classList.remove("register-active");
     });
+
+    initPasswordToggle("#login-password-input", "#login-toggle-password");
+    initPasswordToggle("#register-password-input", "#register-toggle-password");
 });
 
 loginForm.addEventListener("submit", (e) => {
