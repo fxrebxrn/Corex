@@ -1,0 +1,256 @@
+html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+}
+
+html,
+body {
+    overscroll-behavior-y: none;
+}
+
+button,
+.note-card,
+.nav-item,
+.nav-tag-link,
+.menu-item,
+.editor-action-btn,
+.lp-header-nav-button,
+.color-option,
+.tag-select-item {
+    touch-action: manipulation;
+}
+
+.nav-sidebar,
+.notes-sidebar-header,
+.notes-sidebar-footer,
+.note-card,
+.note-card-skeleton,
+.editor-header-options,
+.editor-info-bar,
+.editor-footer,
+.app-modals,
+.note-options-menu,
+.lp-header,
+.lp-footer {
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+.editor-cm-host,
+.editor-cm-host .cm-content,
+.editor-note-title-input,
+.search-input,
+input,
+textarea,
+.auth-input,
+.lp-main-editor-text {
+    -webkit-user-select: text;
+    user-select: text;
+}
+
+.notes-container,
+.nav-tags-list,
+.note-tags-list,
+.account-content,
+.editor-cm-host .cm-scroller {
+    overscroll-behavior: contain;
+}
+
+.editor-mobile-back {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    flex-shrink: 0;
+    background: var(--app-bg-panel);
+    border: none;
+    border-radius: var(--app-radius-md);
+    color: var(--app-text-secondary);
+    cursor: pointer;
+    transition: background 0.12s, color 0.12s, transform 0.1s;
+}
+
+.editor-mobile-back:hover {
+    background: var(--app-bg-hover);
+    color: var(--app-text-primary);
+}
+
+.editor-mobile-back:active {
+    transform: scale(0.92);
+}
+
+.editor-mobile-back svg {
+    width: 18px;
+    height: 18px;
+}
+
+@media (max-width: 1024px) {
+    .app-container {
+        height: 100vh;
+        height: 100dvh;
+    }
+
+    .editor-header-options {
+        padding: 14px 18px;
+        gap: 12px;
+    }
+
+    .editor-note-title-input {
+        font-size: 18px;
+    }
+
+    .editor-main-content {
+        padding: 0 18px;
+    }
+
+    .editor-footer {
+        padding: 8px 18px;
+    }
+}
+
+@media (max-width: 767px) {
+    .app-container {
+        position: relative;
+        height: 100vh;
+        height: 100dvh;
+        overflow: hidden;
+    }
+
+    #central-resizer {
+        display: none;
+    }
+
+    .nav-sidebar {
+        width: 150px !important;
+        min-width: 150px !important;
+    }
+
+    .nav-sidebar-header {
+        padding: 12px 6px;
+    }
+
+    .nav-sections {
+        padding: 0 5px 4px;
+    }
+
+    .notes-sidebar {
+        width: auto !important;
+        min-width: 0 !important;
+        flex: 1 1 auto !important;
+    }
+
+    .editor-area {
+        position: absolute;
+        inset: 0;
+        z-index: 60;
+        transform: translateX(100%);
+        transition: transform 0.34s cubic-bezier(0.22, 1, 0.36, 1);
+        box-shadow: -12px 0 40px rgba(0, 0, 0, 0.55);
+        will-change: transform;
+    }
+
+    .app-container.is-editor-open .editor-area {
+        transform: translateX(0);
+    }
+
+    .editor-mobile-back {
+        display: flex;
+    }
+
+    .editor-header-options {
+        padding: 12px 14px;
+        gap: 10px;
+    }
+
+    .editor-note-title-input {
+        font-size: 17px;
+    }
+
+    .editor-fast-actions {
+        gap: 3px;
+    }
+
+    .editor-action-btn {
+        width: 32px;
+        padding: 0;
+        justify-content: center;
+        gap: 0;
+        font-size: 0;
+    }
+
+    .editor-action-btn svg {
+        width: 15px;
+        height: 15px;
+    }
+
+    .editor-main-content {
+        padding: 0 14px;
+    }
+
+    .editor-footer {
+        padding: 8px 14px;
+        flex-wrap: wrap;
+    }
+
+    .search-input,
+    .editor-note-title-input,
+    .auth-input,
+    .account-field input,
+    .tag-field input[type="text"],
+    .note-tags-search input,
+    #tag-name-input {
+        font-size: 16px;
+    }
+
+    .auth-container {
+        overflow-y: auto;
+        padding: 16px;
+    }
+
+    .auth-side {
+        padding: 30px 26px;
+        border-radius: 30px;
+    }
+
+    .app-modals {
+        padding: 16px;
+        align-items: flex-end;
+    }
+
+    .account-modal,
+    .tag-modal,
+    .delete-tag-modal,
+    .delete-note-modal,
+    .note-tags-modal {
+        max-width: 100%;
+    }
+
+    .note-options-menu {
+        width: 200px;
+    }
+}
+
+@media (max-width: 767px) and (min-height: 560px) {
+    .app-modals {
+        align-items: center;
+    }
+}
+
+@media (max-width: 380px) {
+    .nav-sidebar {
+        width: 132px !important;
+        min-width: 132px !important;
+    }
+
+    .nav-item,
+    .nav-tag-link {
+        font-size: 12.5px;
+    }
+}
+
+@media (max-width: 767px) and (orientation: landscape) {
+    .auth-container {
+        padding: 12px;
+    }
+}

@@ -2,6 +2,7 @@ import { renderRoute } from "./router.js";
 import { initOptionsMenu } from "./ui.js";
 import { initEditor } from "./editor.js";
 import { initLanding } from "./landing.js";
+import { initMobile } from "./mobile.js";
 
 import './auth.js';
 import './notes.js';
@@ -74,6 +75,7 @@ const initApp = () => {
     initEditor();
     initResizer();
     initLanding();
+    initMobile();
     renderRoute();
     initOptionsMenu();
 };
