@@ -57,6 +57,15 @@ class NoteRepository:
 
         return await fetch_all_by_stmt(self.db, stmt)
 
+    async def get_user_notes(self, user_id: int):
+        stmt = (
+            select(Note)
+            .options(selectinload(Note.tags), selectinload(Note.user))
+            .where(Note.user_id == user_id)
+            .order_by(Note.updated_at.desc(), Note.id.desc())
+        )
+        return await fetch_all_by_stmt(self.db, stmt)
+
     async def get_pinned_notes(self, user_id: int):
         stmt = select(Note).options(selectinload(Note.tags), selectinload(Note.user)).where(Note.user_id == user_id, Note.is_pinned == True, Note.is_archived == False).order_by(Note.pinned_position.asc(), Note.id.desc())
         return await fetch_all_by_stmt(self.db, stmt)
