@@ -1,5 +1,7 @@
-from pydantic_settings import BaseSettings
+from pathlib import Path
+
 from pydantic import ConfigDict
+from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
@@ -16,6 +18,10 @@ class Settings(BaseSettings):
     REDIS_HOST: str = "localhost"
     REDIS_PORT: int = 6379
 
-    model_config = ConfigDict(env_file=".env", extra="ignore", env_file_encoding="utf-8")
+    model_config = ConfigDict(
+        env_file=Path(__file__).resolve().parents[2] / ".env",
+        extra="ignore",
+        env_file_encoding="utf-8",
+    )
 
 settings = Settings()

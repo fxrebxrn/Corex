@@ -1,6 +1,16 @@
 import { showToast } from "./ui.js";
 
-export const API_URL = import.meta.env.VITE_API_URL;
+const resolveApiUrl = () => {
+    const configured = import.meta.env.VITE_API_URL?.trim();
+
+    if (configured) {
+        return configured.replace(/\/$/, "");
+    }
+
+    return `http://${window.location.hostname}:8000/api`;
+};
+
+export const API_URL = resolveApiUrl();
 
 const clearSessionAndRedirect = () => {
     localStorage.removeItem("access_token");
