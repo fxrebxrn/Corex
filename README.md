@@ -24,6 +24,7 @@ Corex is a full-stack, self-hosted note-taking web application built around a fa
 - [Development workflow](#development-workflow)
 - [Testing](#testing)
 - [Deployment notes](#deployment-notes)
+- [AI-Helping in work](#ai-helps-in-work)
 
 ## Overview
 
@@ -426,3 +427,4 @@ Since this is a pet project I’m using for learning, I used AI sparingly — on
 - Idea generation
 - Markdown syntax highlighting (colors)
 - Task planning
+- ReadMe
