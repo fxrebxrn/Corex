@@ -10,6 +10,20 @@ jobs:
   docker-compose-up:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: Docker Compose Up
-        run: docker compose up
+    - uses: actions/checkout@v4
+
+    - name: Build
+      run: docker compose build
+
+    - name: Start
+      run: docker compose up -d
+
+    - name: Wait
+      run: sleep 15
+
+    - name: Backend logs
+      run: docker logs corex-backend
+
+    - name: Stop
+      if: always()
+      run: docker compose down -v
