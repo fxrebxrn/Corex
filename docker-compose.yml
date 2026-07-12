@@ -1,0 +1,87 @@
+services:
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+
+    container_name: corex-backend
+
+    env_file:
+      - ./backend/docker.env
+    
+    ports:
+      - "8000:8000"
+
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+        
+    tty: true
+    stdin_open: true
+
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+
+    container_name: corex-frontend
+
+    env_file:
+      - ./frontend/docker.env
+    
+    ports:
+      - "5173:5173"
+
+    restart: unless-stopped
+
+  db:
+    image: postgres:16-alpine
+
+    container_name: corex-db
+
+    ports:
+      - "5432:5432"
+    
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=corex-db
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d corex-db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+    restart: unless-stopped
+
+  redis:
+    image: redis:7
+
+    container_name: corex-redis
+
+    ports:
+      - "6379:6379"
+
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+    volumes:
+      - redis_data:/data
+
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  redis_data:
